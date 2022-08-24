@@ -3,7 +3,6 @@
 //
 //Analyses of complexity:
 //
-
 import java.util.Locale;
 import java.util.ArrayList;
 import java.io.FileReader; 
@@ -31,9 +30,9 @@ class Graph{
 
     //Implementation of Djakstra`s algorithm.
     //How to pass a function as a parameter and receive it here ??
-    public static int calculate_minimal_path( int initial_vertex, int target_vertex, Method wait ){
+    public static float calculate_minimal_path( int initial_vertex, int target_vertex, Method wait ){
     
-        wait.invoke();
+        float waitingTime = wait.invoke();
 
         return 5;
     }
@@ -59,12 +58,12 @@ class Algorithm5{
         Locale.setDefault(Locale.US);
         int number_of_vertexes;
         int number_of_edges;
-
         FileReader reader = new FileReader( args[0] );
         number_of_vertexes = reader.read();
         number_of_edges = reader.read();
         int first_vertex, second_vertex;
         Graph graph = new Graph( number_of_vertexes );
+
         for( int i=0; i<number_of_edges; i++ ){
             first_vertex = reader.read();
             second_vertex = reader.read();
@@ -77,6 +76,3 @@ class Algorithm5{
 
     }
 }
-
-
-
