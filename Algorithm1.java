@@ -92,11 +92,23 @@ class BinaryTree{
    
     //The insertion operation on a binary tree is only guaranteed to be log(n) when
     //the tree is balanced. So in order to keep with the requirement 3 this function is crucial. 
-    private void rebalance( Node node ){}
+    private void rebalance( Node node ){
+    
+    }
 
-    private void rightRotation( Node node ){}
+    //     y                               x
+    //    / \     Right Rotation          /  \
+    //   x   T3   - - - - - - - >        T1   y
+    //  / \       < - - - - - - -            / \
+    // T1  T2     Left Rotation            T2  T3
+    private void rightRotation( Node node ){
+    
+    }
 
-    private void leftRotation( Node node ){}
+    private void leftRotation( Node node ){
+    
+    
+    }
 
     public char get( int key ){
         
@@ -157,36 +169,72 @@ class BinaryTree{
 class RST{
 
     BinaryTree holder;
-    int seed;
+    Random rand;
+    int seed, rangeFloor, rangeRoof ;
+    int k;
 
     public static void sensorSimulator( int seed ){
         this.seed = seed;
+        this.rand = new Random();
+        this.rand.setSeed( seed );
+        //
+    }
+
+    boolean isOdd( int number ){
+
+        return number % 2;
+
+    }
+
+    public void generateInitialPool(){
+        this.k = this.generateRandomK();
+        char[] initialPoolOfInfos = new String[ this.k ];
+        int[] initialPoolOfKeys = new Int[ this.k ];
+
+        for( int i=0; i<this.k; i++ ){
+            initialPoolOfInfos[i] = generateRandomChar();
+            initialPoolOfKeys[i] = this.rand.nextInt( 100 );
+        }
+   
+        this.holder = new BinaryTree( initialPoolOfInfos, initialPoolOfKeys );     
+    }
+
+    private char generateRandomChar(){
+    
+         return (char)(rand.nextInt(26) + 'a');
     
     }
 
-    public void generateInitialPool(){}
+    private int generateRandomK(){
+        int k = rand.nextInt( 27 - 11 ) + 11;
+        if( !isOdd( k ) )
+            k += 1;
 
-    public char generateRandomChar(){}
-
-    public short generateRandomInt(){}
+        return k;
+    }
 
     public void newPairGeneration(){
-        int newKey = this.generateRandomInt;
-        int newInfo = this.generateRandomChar;
-        if( holder.isPresent( newKey ) )
-            holder.replaceInformation( newKey, newInfo );
+        //boolean wasThisPairAccepted = false; 
+        //while( wasThisPairAccepted == false ){
+            int newKey = this.generateRandomInt;
+            int newInfo = this.generateRandomChar;
+            if( holder.isPresent( newKey ) ){
+        //        wasThisPairAccepted = true;
+                holder.replaceInformation( newKey, newInfo );
+            }
+        }
     }
 
-    public void newPairKTimes(){
-        int k = this.generateRandomInt();
-        for( int i=0; i<k; i++ )
-            this.newPairGeneration();
-    }
+//    public void newPairKTimes(){
+//        for( int i=0; i< this.k; i++ )
+//            this.newPairGeneration();
+//    }
 
     public void print(){
-        
+        this.holder.printInOrder();
+        System.out.printf("K = %d\n", this.k );
+        System.out.printf("Initial seed: %d\n", this.seed );
     }
-
 }
 
 
@@ -196,7 +244,8 @@ class Algorithm1{
         
         Locale.setDefault(Locale.US);
         RTS rts = new  RTS( 570049 );
-        
+        rts.generateInitialPool();
+        rts.newPairKTimes();
 
     }
 }
