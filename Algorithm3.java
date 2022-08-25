@@ -2,49 +2,74 @@
 //
 //
 //Analyses of complexity:
-//
+//  - O(n) where n stands for the number of loads
+//  - Because we iterate over the weights only one time
 
-import java.util.Locale
+import java.util.Locale;
+import java.util.ArrayList;
+import java.io.FileReader;
+import java.util.Scanner;
 
+class Solver{
 
-class Solver(){
-
-    ArrayList answer;
+    ArrayList<Integer> answer;
     int numberOfIterations;
+    int ferryCapacity;
+    int numberOfVehicles;
+    int[] weights;
+    int numberOfTrips;
 
-    public static void Solver(){}
-
-    public static void answer(){}
-
-    public static void displayResult(  ){
-        System.out.printf( "Number of trips: %d\n", );
-        for( int i=0; i< ;i++ ){
-            System.out.printf("Total load per trip number %d: %d\n");
-        }
-        System.out.printf("Number of iterations of the algorithm: %d\n", numberOfIterations );
-        System.out.printf("Computational cost of the algorithm: O(n)\n");
+    Solver( int ferryCapacity, int numberOfVehicles, int[] weights ){
+        this.numberOfIterations = 0;
+        this.numberOfVehicles = numberOfVehicles;
+        this.ferryCapacity = ferryCapacity;
+        this.weights = weights;
+        this.answer = new ArrayList<Integer>();
+        this.numberOfTrips = 0;
     }
 
+    public void solve(){
+        int currentLoad = 0;
+        for( int i=0; i<this.numberOfVehicles; i++ ){
+            if( currentLoad + this.weights[i] >= this.ferryCapacity ){
+                this.answer.add( currentLoad );
+                currentLoad = 0;
+                this.numberOfTrips += 1;
+            }
+            currentLoad += this.weights[i];
+        }
+        if( currentLoad != 0 )
+            this.answer.add( currentLoad );
+    }
+
+    public void displayResult(  ){
+        System.out.printf( "Number of trips: %d\n", this.answer.size() );
+        for( int i=0; i< this.answer.size() ;i++ )
+            System.out.printf("Total load per trip number %d: %d\n", i+1, this.answer.get(i));
+        System.out.printf("Number of iterations of the algorithm: %d\n", this.numberOfVehicles );
+        System.out.printf("Computational cost of the algorithm: O(n)\n");
+    }
 }
 
 
 class Algorithm3{
 
-    public static void main( String args[] ){
+    public static void main( String args[] ) throws Exception {
         
         Locale.setDefault(Locale.US);
         FileReader reader = new FileReader( args[0] );
-        int ferryCapacity = reader.read();
-        int numberOfVehicles = reader.read();
+        Scanner scan = new Scanner( reader );
+        int ferryCapacity = scan.nextInt();
+        int numberOfVehicles = scan.nextInt();
         int[] weightsPerVehicle = new int[ numberOfVehicles ];
+
         for( int i=0; i<numberOfVehicles; i++ ){
-            weightsPerVehicle = reader.read();
+            weightsPerVehicle[i] = scan.nextInt();
         }
         
-        Solver solution = new Solver(  );
-        solution.answer();
+        Solver solution = new Solver( ferryCapacity, numberOfVehicles, weightsPerVehicle );
+        solution.solve();
         solution.displayResult();
-
     }
 
 }
