@@ -1,11 +1,16 @@
 //Use of algorithm:
-//
+//  The AVL data structure was used, with the treshold for balancing minimal. 
+//  This was the only solution to guarantee that the search and insertion would occur in log(n).
 //
 //Analyses of complexity:
 //
+//  Tree insertion and search is done with O( n ) = log(n)
+//  Median access is done on O = 1
 
 import java.util.Locale;
 import java.util.Random;
+import java.util.Arrays;
+
 
 class Node{
 
@@ -14,6 +19,8 @@ class Node{
     public Node parent;
     public char information;
     public short key;
+    public int height;
+    public int factor;
 
     void Node( char information, short key ){
         this.information = information;
@@ -21,6 +28,7 @@ class Node{
         this.parent = null;
         this.left = null;
         this.right = null;
+        this.height = 0;
     }
 }
 
@@ -28,8 +36,7 @@ class BinaryTree{
 
     Node root;
     int numberOfElements;
-    short medianValue;
-    Node medianNodePointer;
+    Node median;
 
     public void BinaryTree(){
         this.root = null;
@@ -44,12 +51,9 @@ class BinaryTree{
         for( int i=0; i<size; i++ )
             this.insert( info_arr[i], key_arr[i] );
 
-        //sort arr in order to know who is the median...
-        //
-
-        this.median = 0;
-        this.medianNodePointer = this.get( median );
-
+        java.util.Array.sort( key_arr );
+        int medianValue = key_arr[ (int)(size - 1)/2 ]; 
+        this.median = this.get( median );
     }
 
     public void insert( char information, int key ){
@@ -73,7 +77,10 @@ class BinaryTree{
         }
 
         this.insert( node, root );
-
+        this.updateMedianAfterInsertion( key );
+        this.numberOfElements+=1;
+        this.updateHeights( node );
+        this.rebalance( node );
     }
 
     private void insert( Node to_be_inserted, Node current_node ){
@@ -110,11 +117,22 @@ class BinaryTree{
     
     }
 
+    private void getNodeHeight( Node node ){
+        if( node == null )
+            return 0;
+        return node.height;
+    }
+
+    private void updateHeights( Node node ){
+        while( node != null ){
+            node.height = Math.max( this.getNodeHeight( node.left ), this.getNodeHeight( node.right ) ) 
+            node = node.parent;
+        }
+    }
+
     public char get( int key ){
-        
         Node temporary = this.get( key, this.root );
         return temporary.information;
-
     }
 
     private Node get( short key, Node node ){
@@ -155,13 +173,79 @@ class BinaryTree{
         System.out.printf( "< %d, %c >\n", this.medianNodePointer.key, this.medianNodePointer.information );
     }
 
-    private void moveMedianToTheRight(){}
+    //
+    //
+    //
+    private void moveMedianToTheRight(){
+        Node node = this.median;
+        if( node.right != null ){
+            node = node.right;
+            while( node.left != null )
+                node = node.left;
+            this.median = node;
+            return;
+        }
 
-    private void modeMedianToTheLeft(){}
+        if( node.parent.key > node.key ){
+            this.median = node.parent;
+            return;
+        }
+        
+        while(  node.key > node.parent.key  ){
+            node = node.parent;
+        }
+        node = node.parent;
+        node = node.right;
+        while( node.left != null ){
+            node = node.left;
+        }
+        this.median = node;
+    }
 
-    private void updateMedianAfterInsertion( int new_kwy ){
+    //
+    //
+    //
+    private void moveMedianToTheLeft(){
+        Node node = this.median;
+        if( node.left != null ){
+            node = node.left;
+            while( node.right != null )
+                node = node.right;
+            this.median = node;
+            return;
+        }
     
+        if( node.parent.key > node.key ){
+            this.median = node.parent;
+            return;
+        }
     
+        while(  node.key < node.parent.key  ){
+            node = node.parent;
+        }
+        node = node.parent;
+        node = node.left;
+        while( node.right != null ){
+            node = node.right;
+        }
+        this.median = node; 
+    }
+
+    private boolean isOdd( int number ){
+        return ( number % 2 != 0 )
+    }
+
+    private boolean isEven( int number ){
+        return ( number % 2 == 0 )
+    }
+
+    private void updateMedianAfterInsertion( int insertedValue ){
+        int currentMedianValue;
+        if( ( insertedValue > currentMedianValue ) && isEven(this.numberOfElements) ){
+            this.moveMedianToTheRight();
+        } else if( this.isOdd( this.numberOfElements ) && (insertedValue < currentMedianValue ) ){
+            this.moveMedianToTheLeft();
+        }
     }
 }
 
@@ -249,7 +333,4 @@ class Algorithm1{
 
     }
 }
-
-
-
 
