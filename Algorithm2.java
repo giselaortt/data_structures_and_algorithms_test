@@ -6,12 +6,14 @@
 //
 
 import java.util.Locale;
+import java.io.FileReader; 
+import java.util.ArrayList;
 
 
 class Pair{
-    short selector;
+    int selector;
     char information;
-    void Pair( short selector, char information ){
+    Pair( int selector, char information ){
         this.selector = selector;
         this.information = information;
     }
@@ -20,22 +22,24 @@ class Pair{
 
 class Area51{
     
-    short selectorBound;
-    ArrayList<char>[] mappingPerInfos;
-    ArrayList<int>[] mappingPerSelector;
+    int selectorBound;
+    ArrayList<Character>[] mappingPerInfos;
+    ArrayList<Integer>[] mappingPerSelector;
 
-    public void Area51( short selectorBound ){}
+    Area51( int selectorBound ){}
 
-    public void addPair( short selector, char info ){}
+    public void addPair( int selector, char info ){}
 
     public boolean isPresent( Pair pair ){
    
         System.out.println("element present");
         System.out.println("element nor present");
-
+        return true;
     }
 
-    public static boolean isPresent( short selector, char info ){}
+    public static boolean isPresent( int selector, char info ){
+        return true;
+    }
 
     //Required to be O(1)
     public static void searchPerInfo( char info ){
@@ -44,7 +48,7 @@ class Area51{
     }
 
     //Required to be O(1)
-    public static void searchPerSelector( short selector ){
+    public static void searchPerSelector( int selector ){
     
     
         System.out.println("empty list");
@@ -60,14 +64,14 @@ class Algorithm2{
         
         Locale.setDefault(Locale.US);
         FileReader reader = new FileReader( args[0] );
-        short n = reader.read();
-        short k = reader.read();
+        int n = reader.read();
+        int k = reader.read();
         char info;
-        short selector;
+        int selector;
         Area51 solver = new Area51( k );
         for( int i=0; i<n; i++ ){
             selector = reader.read();
-            info = reader.read();
+            info = (char)reader.read();
             solver.addPair( selector, info );
         }
 
@@ -87,5 +91,7 @@ class Algorithm2{
     }
 
 }
+
+
 
 
