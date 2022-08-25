@@ -18,11 +18,11 @@ class Node{
     public Node right;
     public Node parent;
     public char information;
-    public short key;
+    public int key;
     public int height;
     public int factor;
 
-    void Node( char information, short key ){
+    Node( char information, int key ){
         this.information = information;
         this.key = key;
         this.parent = null;
@@ -30,6 +30,17 @@ class Node{
         this.right = null;
         this.height = 0;
     }
+
+    public int calculateFactor(){
+        if( this.right == null && this.left == null )
+            return 0;
+        if( this.right == null )
+            return -1*this.left.height;
+        if( this.left == null )
+            return this.right.height;
+        return ( this.right.height - this.left.height );
+    }
+
 }
 
 class BinaryTree{
@@ -38,22 +49,22 @@ class BinaryTree{
     int numberOfElements;
     Node median;
 
-    public void BinaryTree(){
+    BinaryTree(){
         this.root = null;
         this.numberOfElements = 0;
-        this.median = 0;
+        this.median = null;
     }
 
-    public void BinaryTree( int[] key_arr, char[] info_arr, int size ){
+    BinaryTree( int[] key_arr, char[] info_arr, int size ){
         this.root = null;
         this.numberOfElements = size;
 
         for( int i=0; i<size; i++ )
             this.insert( info_arr[i], key_arr[i] );
 
-        java.util.Array.sort( key_arr );
+        Arrays.sort( key_arr );
         int medianValue = key_arr[ (int)(size - 1)/2 ]; 
-        this.median = this.get( median );
+        this.median = this.get( medianValue, this.root );
     }
 
     public void insert( char information, int key ){
@@ -64,13 +75,13 @@ class BinaryTree{
             return;
         }
 
-        if( root.left == null && node.key < root.left ){
+        if( root.left == null && node.key < root.left.key ){
             root.left = node;
             node.parent = root;
             return;
         }
 
-        if( root.right == null && node.key > root.right ){
+        if( root.right == null && node.key > root.right.key ){
             root.right = node;
             node.parent = root;
             return;
@@ -85,13 +96,17 @@ class BinaryTree{
 
     private void insert( Node to_be_inserted, Node current_node ){
         if( to_be_inserted.key > current_node.key ){
-            if( current_node.right != null )
-                return insert( to_be_inserted, current_node.right );
+            if( current_node.right != null ){
+                insert( to_be_inserted, current_node.right );
+                return;
+            }
             current_node.right = to_be_inserted;
             to_be_inserted.parent = current_node;
         } else {
-            if( current_node.left != null )
-                return insert( to_be_inserted, current_node.left );
+            if( current_node.left != null ){
+                insert( to_be_inserted, current_node.left );
+                return;
+            }
             current_node.left = to_be_inserted;
             to_be_inserted.parent = current_node;
         }
@@ -100,7 +115,28 @@ class BinaryTree{
     //The insertion operation on a binary tree is only guaranteed to be log(n) when
     //the tree is balanced. So in order to keep with the requirement 3 this function is crucial. 
     private void rebalance( Node node ){
-    
+        Node leaf = node;
+        while( node != null ){
+            if( node.calculateFactor() >= 2 ){
+                if( node.left.calculateFactor() == 1 ){
+                    this.rightRotation( node );
+                } else {
+                    this.leftRotation( node.left );
+                    this.rightRotation( node );
+                }
+                break;
+            } else if ( node.calculateFactor() <= 2 ){
+                 if( node.right.calculateFactor() == -1 ){
+                    this.leftRotation( node );
+                } else {
+                    this.rightRotation( node.right );
+                    this.leftRotation( node );
+                }
+                break;
+            }
+            node = node.parent;
+        }
+       this.updateHeights( leaf ); 
     }
 
     //     y                               x
@@ -109,15 +145,44 @@ class BinaryTree{
     //  / \       < - - - - - - -            / \
     // T1  T2     Left Rotation            T2  T3
     private void rightRotation( Node node ){
-    
+        Node newParent = node.left;
+        newParent.parent = node.parent;
+        if( node == this.root )
+            this.root = newParent;
+        else {
+            if( node.parent.key > node.key )
+                node.parent.left = newParent;
+            else
+                node.parent.right = newParent;
+        }
+        node.parent = newParent;
+        node.left = newParent.right;
+        if( newParent.right != null )
+            newParent.right.parent = node;
+        newParent.right = node;
+        this.updateHeights( node );
     }
 
     private void leftRotation( Node node ){
-    
-    
+        Node newParent = node.right;
+        newParent.parent = node.parent;
+        if( node == this.root )
+            this.root = newParent;
+        else{
+            if( node.parent.key > node.key )
+                node.parent.left = newParent;
+            else
+                node.parent.right = newParent;
+        }
+        node.parent = newParent;
+        node.right = newParent.left;
+        if( newParent.left != null )
+            newParent.left.parent = node;
+        newParent.left = node;
+        this.updateHeights( node );
     }
 
-    private void getNodeHeight( Node node ){
+    private int getNodeHeight( Node node ){
         if( node == null )
             return 0;
         return node.height;
@@ -125,7 +190,7 @@ class BinaryTree{
 
     private void updateHeights( Node node ){
         while( node != null ){
-            node.height = Math.max( this.getNodeHeight( node.left ), this.getNodeHeight( node.right ) ) 
+            node.height = Math.max( this.getNodeHeight( node.left ), this.getNodeHeight( node.right ) ); 
             node = node.parent;
         }
     }
@@ -135,7 +200,7 @@ class BinaryTree{
         return temporary.information;
     }
 
-    private Node get( short key, Node node ){
+    private Node get( int key, Node node ){
         if( node == null )
             return null;
 
@@ -148,14 +213,14 @@ class BinaryTree{
         return this.get( key, node.right );
     }
 
-    public boolean isPresent( short key ){
+    public boolean isPresent( int key ){
         if( this.get( key, this.root ) == null )
             return false;
         return true;
     }
 
-    public void replaceInformation( short key, char information ){
-        Node node = this.get( key );
+    public void replaceInformation( int key, char information ){
+        Node node = this.get( key, this.root );
         node.information = information;
     }
 
@@ -170,7 +235,7 @@ class BinaryTree{
     }
 
     public void printNodeWithMedianKey(){
-        System.out.printf( "< %d, %c >\n", this.medianNodePointer.key, this.medianNodePointer.information );
+        System.out.printf( "< %d, %c >\n", this.median.key, this.median.information );
     }
 
     //
@@ -232,15 +297,15 @@ class BinaryTree{
     }
 
     private boolean isOdd( int number ){
-        return ( number % 2 != 0 )
+        return ( number % 2 != 0 );
     }
 
     private boolean isEven( int number ){
-        return ( number % 2 == 0 )
+        return ( number % 2 == 0 );
     }
 
     private void updateMedianAfterInsertion( int insertedValue ){
-        int currentMedianValue;
+        int currentMedianValue = this.median.key;
         if( ( insertedValue > currentMedianValue ) && isEven(this.numberOfElements) ){
             this.moveMedianToTheRight();
         } else if( this.isOdd( this.numberOfElements ) && (insertedValue < currentMedianValue ) ){
@@ -250,37 +315,30 @@ class BinaryTree{
 }
 
 
-class RST{
+class RTS{
 
     BinaryTree holder;
     Random rand;
     int seed, rangeFloor, rangeRoof ;
     int k;
 
-    public static void sensorSimulator( int seed ){
+    RTS( int seed ){
         this.seed = seed;
         this.rand = new Random();
         this.rand.setSeed( seed );
-        //
-    }
-
-    boolean isOdd( int number ){
-
-        return number % 2;
-
     }
 
     public void generateInitialPool(){
         this.k = this.generateRandomK();
-        char[] initialPoolOfInfos = new String[ this.k ];
-        int[] initialPoolOfKeys = new Int[ this.k ];
+        char[] initialPoolOfInfos = new char[ this.k ];
+        int[] initialPoolOfKeys = new int[ this.k ];
 
         for( int i=0; i<this.k; i++ ){
             initialPoolOfInfos[i] = generateRandomChar();
             initialPoolOfKeys[i] = this.rand.nextInt( 100 );
         }
    
-        this.holder = new BinaryTree( initialPoolOfInfos, initialPoolOfKeys );     
+        this.holder = new BinaryTree( initialPoolOfKeys, initialPoolOfInfos, k );     
     }
 
     private char generateRandomChar(){
@@ -291,7 +349,7 @@ class RST{
 
     private int generateRandomK(){
         int k = rand.nextInt( 27 - 11 ) + 11;
-        if( !isOdd( k ) )
+        if( k % 2 == 0 )
             k += 1;
 
         return k;
@@ -300,19 +358,19 @@ class RST{
     public void newPairGeneration(){
         //boolean wasThisPairAccepted = false; 
         //while( wasThisPairAccepted == false ){
-            int newKey = this.generateRandomInt;
-            int newInfo = this.generateRandomChar;
+            int newKey = this.rand.nextInt();
+            char newInfo = this.generateRandomChar();
             if( holder.isPresent( newKey ) ){
         //        wasThisPairAccepted = true;
-                holder.replaceInformation( newKey, newInfo );
+                this.holder.replaceInformation( newKey, newInfo );
             }
-        }
+        //}
     }
 
-//    public void newPairKTimes(){
-//        for( int i=0; i< this.k; i++ )
-//            this.newPairGeneration();
-//    }
+    public void newPairKTimes(){
+        for( int i=0; i< this.k; i++ )
+            this.newPairGeneration();
+    }
 
     public void print(){
         this.holder.printInOrder();
@@ -324,7 +382,7 @@ class RST{
 
 class Algorithm1{
 
-    public static void main( String args[] ){
+    public void main( String args[] ){
         
         Locale.setDefault(Locale.US);
         RTS rts = new  RTS( 570049 );
