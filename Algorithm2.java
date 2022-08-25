@@ -1,61 +1,81 @@
-//
 //Use of algorithm:
 //
 //
 //Analyses of complexity:
 //
+//
 
 import java.util.Locale;
 import java.io.FileReader; 
 import java.util.ArrayList;
-
-
-class Pair{
-    int selector;
-    char information;
-    Pair( int selector, char information ){
-        this.selector = selector;
-        this.information = information;
-    }
-}
+import java.util.HashMap;
 
 
 class Area51{
-    
     int selectorBound;
-    ArrayList<Character>[] mappingPerInfos;
-    ArrayList<Integer>[] mappingPerSelector;
+    HashMap< Integer, ArrayList<Character>> selectormaps = new HashMap< Integer, ArrayList<Character>>();
+    HashMap< Character, ArrayList<Integer>> infomaps = new HashMap< Character, ArrayList<Integer>>();
 
-    Area51( int selectorBound ){}
-
-    public void addPair( int selector, char info ){}
-
-    public boolean isPresent( Pair pair ){
-   
-        System.out.println("element present");
-        System.out.println("element nor present");
-        return true;
+    Area51(){
+        this.selectormaps = new HashMap< Integer, ArrayList<Character>>();
+        this.infomaps = new HashMap< Character, ArrayList<Integer>>();
     }
 
-    public static boolean isPresent( int selector, char info ){
-        return true;
+    //
+    public void addPair( int selector, char information ){
+           if( this.isPresent( selector )==false )
+                this.selectormaps.put( selector, new ArrayList<Character>() );
+           this.selectormaps.get( selector ).add( information );
+           if( this.isPresent( information ) == false )
+               this.infomaps.put( information, new ArrayList<Integer>() );
+           this.infomaps.get( information ).add( selector );
     }
 
-    //Required to be O(1)
-    public static void searchPerInfo( char info ){
-    
-        System.out.println("empty list");
+    //
+    public void isPresent( int selector, char information ){
+        if( this.isPresent( selector ) == false || this.isPresent( information ) == false ){
+            System.out.println("element not present");
+            return;
+        }
+        int size = this.infomaps.get( information ).size();
+        for( int i=0; i<size; i++ ){
+            if( this.infomaps.get( information ).get(i) == selector ){
+                System.out.println("element present");
+                return;
+            }
+        }
+        System.out.println("element not present");
     }
 
-    //Required to be O(1)
-    public static void searchPerSelector( int selector ){
-    
-    
-        System.out.println("empty list");
+    private boolean isPresent( int selector ){
+        return this.selectormaps.containsKey(selector);
     }
 
+    private boolean isPresent( char information ){
+        return this.selectormaps.containsKey(information);
+    }
 
+    //
+    public void searchPerInfo( char information ){
+        if( this.isPresent( information ) == false )
+            System.out.println("empty list");
+        else{
+            int size = this.infomaps.get(information).size();
+            for( int i=0; i<size; i++ )
+                System.out.println( this.infomaps.get(information).get(i) );
+        }
+    }
 
+    //
+    public void searchPerSelector( int selector ){
+        if( this.isPresent( selector ) == false )
+            System.out.println("empty list");
+        else {
+            int size = this.selectormaps.get( selector ).size();
+            for( int i=0; i<size; i++ )
+                System.out.println( this.selectormaps.get( selector ).get( i ) );
+        } 
+    }
 }
 
 class Algorithm2{
@@ -66,13 +86,13 @@ class Algorithm2{
         FileReader reader = new FileReader( args[0] );
         int n = reader.read();
         int k = reader.read();
-        char info;
+        char information;
         int selector;
-        Area51 solver = new Area51( k );
+        Area51 solver = new Area51( );
         for( int i=0; i<n; i++ ){
             selector = reader.read();
-            info = (char)reader.read();
-            solver.addPair( selector, info );
+            information = (char)reader.read();
+            solver.addPair( selector, information );
         }
 
         solver.isPresent( 27, 'c' );
@@ -91,7 +111,3 @@ class Algorithm2{
     }
 
 }
-
-
-
-
