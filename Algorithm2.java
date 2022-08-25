@@ -5,6 +5,7 @@
 //
 //
 
+import java.util.Scanner;
 import java.util.Locale;
 import java.io.FileReader; 
 import java.util.ArrayList;
@@ -62,7 +63,8 @@ class Area51{
         else{
             int size = this.infomaps.get(information).size();
             for( int i=0; i<size; i++ )
-                System.out.println( this.infomaps.get(information).get(i) );
+                System.out.printf( "%d ", this.infomaps.get(information).get(i) );
+            System.out.println();
         }
     }
 
@@ -73,7 +75,8 @@ class Area51{
         else {
             int size = this.selectormaps.get( selector ).size();
             for( int i=0; i<size; i++ )
-                System.out.println( this.selectormaps.get( selector ).get( i ) );
+                System.out.printf("%c ", this.selectormaps.get( selector ).get( i ) );
+            System.out.println();
         } 
     }
 }
@@ -84,17 +87,21 @@ class Algorithm2{
         
         Locale.setDefault(Locale.US);
         FileReader reader = new FileReader( args[0] );
-        int n = reader.read();
-        int k = reader.read();
+        Scanner scan = new Scanner( reader );
+        int n = scan.nextInt();
+        int k = scan.nextInt();
+        scan.nextLine();
         char information;
         int selector;
         Area51 solver = new Area51( );
+
         for( int i=0; i<n; i++ ){
-            selector = reader.read();
-            information = (char)reader.read();
+            String line = scan.nextLine();
+            String[] tokens = line.replaceAll("\n", "" ).split(" ");
+            selector = Integer.parseInt(tokens[0]);
+            information = (char)tokens[1].charAt(0);
             solver.addPair( selector, information );
         }
-
         solver.isPresent( 27, 'c' );
         solver.isPresent( 30, 'c' );
         solver.isPresent( 44, 'c' );
