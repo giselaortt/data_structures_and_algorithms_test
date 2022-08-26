@@ -53,14 +53,14 @@ class Area51{
     }
 
     private boolean isPresent( char information ){
-        return this.selectormaps.containsKey(information);
+        return this.infomaps.containsKey(information);
     }
 
     //
     public void searchPerInfo( char information ){
-        if( this.isPresent( information ) == false )
+        if( this.isPresent( information ) == false ){
             System.out.println("empty list");
-        else{
+        } else {
             int size = this.infomaps.get(information).size();
             for( int i=0; i<size; i++ )
                 System.out.printf( "%d ", this.infomaps.get(information).get(i) );
@@ -102,16 +102,18 @@ class Algorithm2{
             information = (char)tokens[1].charAt(0);
             solver.addPair( selector, information );
         }
+
+
         solver.isPresent( 27, 'c' );
         solver.isPresent( 30, 'c' );
         solver.isPresent( 44, 'c' );
-
+        System.out.println();
         solver.searchPerInfo( 'a' );
         solver.searchPerInfo( 'd' );
         solver.searchPerInfo( 's' );
         solver.searchPerInfo( 'f' );
         solver.searchPerInfo( 'u' );
-
+        System.out.println();
         solver.searchPerSelector( 27 );
         solver.searchPerSelector( 30 );
         solver.searchPerSelector( 4 );
