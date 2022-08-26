@@ -3,11 +3,26 @@
 //
 //Analyses of complexity:
 //
+//
 import java.util.Locale;
 import java.util.ArrayList;
 import java.io.FileReader; 
 import java.util.Scanner;
 import java.lang.reflect.Method;
+import java.lang.Double;
+import java.lang.Integer;
+import java.util.function.*;
+import java.util.*;
+
+
+class Edge{
+    Edge(){}
+}
+
+
+class EdgeComparator implements Comparator<Edge>{
+    public int compare( Edge first, Edge second ){}
+}
 
 
 //There are 2 ways to represent a Graph, eighter as adjacency list or a matrix. Because we do not know wether the Graph is dense,
@@ -15,24 +30,30 @@ import java.lang.reflect.Method;
 //when the graph is dense. 
 class Graph{
 
-    ArrayList< ArrayList< Integer > > edges;
+    ArrayList<ArrayList<Integer>> edges;
+    PriorityQueue<Edges> edges = new PriorityQueue<Edges>();
+    //pq.add();
+    //pq.peek(); // acess 
+    //pq.poll(); //  acess and delete
 
-    public Graph( int number_of_vertexes ){
+    public Graph( int numberOfVertexes ){
         edges = new ArrayList< ArrayList< Integer > >();
-        for( int i=0; i<number_of_vertexes; i++ ){
+        for( int i=0; i<numberOfVertexes; i++ ){
             edges.add( new ArrayList< Integer >() );
         } 
     }
 
-    public void addEdge( int vertex, int other_vertex ){
-        edges.get(vertex).add( other_vertex );
+    public void addEdge( int vertex, int otherVertex, double value ){
+        edges.get(vertex).add( otherVertex );
     }
 
     //Implementation of Djakstra`s algorithm.
     //How to pass a function as a parameter and receive it here ??
-    public static float calculate_minimal_path( int initial_vertex, int target_vertex, Method wait ){
+    public float calculateMinimalPath( int initialVertex, int targetVertex, BiFunction< Integer, Double, Double > wait ){
+    //public static float calculateMinimalPath( int initialVertex, int targetVertex, Method wait ){
     
-        float waitingTime = wait.invoke();
+        double waitingTime = wait.apply( 0, 0.53 );
+        //double waitingTime = wait.invoke( 0, 0.53 );
 
         return 5;
     }
@@ -56,23 +77,36 @@ class Algorithm5{
     public static void main( String args[] ) throws Exception {
         
         Locale.setDefault(Locale.US);
-        int number_of_vertexes;
+        int numberOfVertexes;
         int number_of_edges;
         FileReader reader = new FileReader( args[0] );
-        number_of_vertexes = reader.read();
-        number_of_edges = reader.read();
-        int first_vertex, second_vertex;
-        Graph graph = new Graph( number_of_vertexes );
+        Scanner scan = new Scanner( reader );
+        numberOfVertexes = scan.nextInt();
+        scan.nextLine();
+        number_of_edges = scan.nextInt();
+        scan.nextLine();
+        int firstVertex, secondVertex;
+        Graph graph = new Graph( numberOfVertexes );
+
+        //Method method;
+        //Object[] parameters = {Integer.class, Double.class};
+        //method = ExampleWaitingFunction.class.getMethod("waitingTime", parameters );
 
         for( int i=0; i<number_of_edges; i++ ){
-            first_vertex = reader.read();
-            second_vertex = reader.read();
+            firstVertex = scan.nextInt();
+            secondVertex = scan.nextInt();
+            double weight = scan.nextFloat();
+            scan.nextLine();
             //change on the third parameter to pass the real waiting function.
-            graph.addEdge( first_vertex, second_vertex, ExampleWaitingFunction::waitingTime );
+            graph.addEdge( firstVertex, secondVertex, weight );
         }
     
-        System.out.println(graph.calculate_minimal_path(0, number_of_vertexes-1));
-       
+        //System.out.println(graph.calculateMinimalPath(0, numberOfVertexes-1, method));
+        //graph.calculateMinimalPath( 0, numberOfVertexes-1, method );
+        //graph.calculateMinimalPath( 0, numberOfVertexes-1, ExampleWaitingFunction::waitingTime );
 
     }
 }
+
+
+
