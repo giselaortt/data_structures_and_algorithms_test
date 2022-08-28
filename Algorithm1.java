@@ -1,198 +1,78 @@
 //Use of algorithm:
-//  The AVL data structure was used, with the treshold for balancing minimal. 
-//  This was the only solution to guarantee that the search and insertion would occur in log(n).
+//  In order to guarantee that the search would occur in log(n) it was necessary to create a
+//  balanced tree. since there is no further insertion or deletion the tree structure will remain the same.
+//  only the keys of the elements will change.
+//  That is why there is no need to update the balancing and the median value.
 //
 //Analyses of complexity:
 //
 //  Tree insertion and search is done with O( n ) = log(n)
-//  Median access is done on O = 1
-
+//  Median access is done on O( n )  = 1
 import java.util.Locale;
 import java.util.Random;
 import java.util.Arrays;
+import java.lang.Comparable;
 
 
-class Node{
-
+class Node implements Comparable<Node> {
     public Node left;
     public Node right;
-    public Node parent;
     public char information;
     public int key;
-    public int height;
-    public int factor;
 
     Node( char information, int key ){
         this.information = information;
         this.key = key;
-        this.parent = null;
         this.left = null;
         this.right = null;
-        this.height = 0;
     }
 
-    public int calculateFactor(){
-        if( this.right == null && this.left == null )
-            return 0;
-        if( this.right == null )
-            return -1*this.left.height;
-        if( this.left == null )
-            return this.right.height;
-        return ( this.right.height - this.left.height );
+    @Override
+    public int compareTo( Node otherNode ){
+        return (int)( this.key - otherNode.key );
     }
-
 }
+
 
 class BinaryTree{
 
     Node root;
     int numberOfElements;
-    Node median;
 
-    BinaryTree(){
-        this.root = null;
-        this.numberOfElements = 0;
-        this.median = null;
-    }
-
-    BinaryTree( int[] key_arr, char[] info_arr, int size ){
-        this.root = null;
+    BinaryTree( int[] keys, char[] informations, int size ){
         this.numberOfElements = size;
+        Node elements[] = new Node[ size ];
 
-        for( int i=0; i<size; i++ )
-            this.insert( info_arr[i], key_arr[i] );
+        for( int i=0; i<size; i++ ){
+            elements[i] = new Node( informations[i], keys[i] );
+        }
 
-        Arrays.sort( key_arr );
-        int medianValue = key_arr[ (int)(size - 1)/2 ]; 
-        this.median = this.get( medianValue, this.root );
+        Arrays.sort( elements );
+        int medianPosition = (int)((size)/2);
+        this.root = elements[ medianPosition ];
+        this.root.left = constructSubtree( elements, 0, medianPosition );
+        this.root.right = constructSubtree( elements, medianPosition+1, numberOfElements );
     }
 
-    public void insert( char information, int key ){
-        Node node = new Node( information, key );
-        this.numberOfElements += 1;
-        if( this.root == null ){
-            this.root = node;
-            return;
-        }
+    // using exclusive interval on the end...
+    private static Node constructSubtree( Node elements[], int begin, int end ){
+        int middle = (int)( (end-begin)/2 + begin );
 
-        if( root.left == null && node.key < root.left.key ){
-            root.left = node;
-            node.parent = root;
-            return;
-        }
+        if( end - begin == 0 )
+            return null;
 
-        if( root.right == null && node.key > root.right.key ){
-            root.right = node;
-            node.parent = root;
-            return;
+        if( end - begin == 1 )
+            return elements[ begin ];
+        
+        if( end - begin == 2 ){
+            elements[ end-1 ].left = elements[ begin ];
+            return elements[ end-1 ];
         }
+        Node rootOfSubtree = elements[ middle ];
+        rootOfSubtree.left = constructSubtree( elements, begin, middle );
+        rootOfSubtree.right = constructSubtree( elements, middle+1, end );
 
-        this.insert( node, root );
-        this.updateMedianAfterInsertion( key );
-        this.numberOfElements+=1;
-        this.updateHeights( node );
-        this.rebalance( node );
-    }
-
-    private void insert( Node to_be_inserted, Node current_node ){
-        if( to_be_inserted.key > current_node.key ){
-            if( current_node.right != null ){
-                insert( to_be_inserted, current_node.right );
-                return;
-            }
-            current_node.right = to_be_inserted;
-            to_be_inserted.parent = current_node;
-        } else {
-            if( current_node.left != null ){
-                insert( to_be_inserted, current_node.left );
-                return;
-            }
-            current_node.left = to_be_inserted;
-            to_be_inserted.parent = current_node;
-        }
-    }
-   
-    //The insertion operation on a binary tree is only guaranteed to be log(n) when
-    //the tree is balanced. So in order to keep with the requirement 3 this function is crucial. 
-    private void rebalance( Node node ){
-        Node leaf = node;
-        while( node != null ){
-            if( node.calculateFactor() >= 2 ){
-                if( node.left.calculateFactor() == 1 ){
-                    this.rightRotation( node );
-                } else {
-                    this.leftRotation( node.left );
-                    this.rightRotation( node );
-                }
-                break;
-            } else if ( node.calculateFactor() <= 2 ){
-                 if( node.right.calculateFactor() == -1 ){
-                    this.leftRotation( node );
-                } else {
-                    this.rightRotation( node.right );
-                    this.leftRotation( node );
-                }
-                break;
-            }
-            node = node.parent;
-        }
-       this.updateHeights( leaf ); 
-    }
-
-    //     y                               x
-    //    / \     Right Rotation          /  \
-    //   x   T3   - - - - - - - >        T1   y
-    //  / \       < - - - - - - -            / \
-    // T1  T2     Left Rotation            T2  T3
-    private void rightRotation( Node node ){
-        Node newParent = node.left;
-        newParent.parent = node.parent;
-        if( node == this.root )
-            this.root = newParent;
-        else {
-            if( node.parent.key > node.key )
-                node.parent.left = newParent;
-            else
-                node.parent.right = newParent;
-        }
-        node.parent = newParent;
-        node.left = newParent.right;
-        if( newParent.right != null )
-            newParent.right.parent = node;
-        newParent.right = node;
-        this.updateHeights( node );
-    }
-
-    private void leftRotation( Node node ){
-        Node newParent = node.right;
-        newParent.parent = node.parent;
-        if( node == this.root )
-            this.root = newParent;
-        else{
-            if( node.parent.key > node.key )
-                node.parent.left = newParent;
-            else
-                node.parent.right = newParent;
-        }
-        node.parent = newParent;
-        node.right = newParent.left;
-        if( newParent.left != null )
-            newParent.left.parent = node;
-        newParent.left = node;
-        this.updateHeights( node );
-    }
-
-    private int getNodeHeight( Node node ){
-        if( node == null )
-            return 0;
-        return node.height;
-    }
-
-    private void updateHeights( Node node ){
-        while( node != null ){
-            node.height = Math.max( this.getNodeHeight( node.left ), this.getNodeHeight( node.right ) ); 
-            node = node.parent;
-        }
+        return rootOfSubtree;
     }
 
     public char get( int key ){
@@ -229,90 +109,18 @@ class BinaryTree{
     }
 
     private void printInOrder( Node node ){
+        if( node == null )
+            return;
         printInOrder( node.left );
         System.out.printf( "< %d, %c >\n", node.key, node.information );
         printInOrder( node.right );
     }
 
     public void printNodeWithMedianKey(){
-        System.out.printf( "< %d, %c >\n", this.median.key, this.median.information );
+        System.out.printf( "< %d, %c >\n", this.root.key, this.root.information );
     }
 
-    //
-    //
-    //
-    private void moveMedianToTheRight(){
-        Node node = this.median;
-        if( node.right != null ){
-            node = node.right;
-            while( node.left != null )
-                node = node.left;
-            this.median = node;
-            return;
-        }
-
-        if( node.parent.key > node.key ){
-            this.median = node.parent;
-            return;
-        }
-        
-        while(  node.key > node.parent.key  ){
-            node = node.parent;
-        }
-        node = node.parent;
-        node = node.right;
-        while( node.left != null ){
-            node = node.left;
-        }
-        this.median = node;
-    }
-
-    //
-    //
-    //
-    private void moveMedianToTheLeft(){
-        Node node = this.median;
-        if( node.left != null ){
-            node = node.left;
-            while( node.right != null )
-                node = node.right;
-            this.median = node;
-            return;
-        }
-    
-        if( node.parent.key > node.key ){
-            this.median = node.parent;
-            return;
-        }
-    
-        while(  node.key < node.parent.key  ){
-            node = node.parent;
-        }
-        node = node.parent;
-        node = node.left;
-        while( node.right != null ){
-            node = node.right;
-        }
-        this.median = node; 
-    }
-
-    private boolean isOdd( int number ){
-        return ( number % 2 != 0 );
-    }
-
-    private boolean isEven( int number ){
-        return ( number % 2 == 0 );
-    }
-
-    private void updateMedianAfterInsertion( int insertedValue ){
-        int currentMedianValue = this.median.key;
-        if( ( insertedValue > currentMedianValue ) && isEven(this.numberOfElements) ){
-            this.moveMedianToTheRight();
-        } else if( this.isOdd( this.numberOfElements ) && (insertedValue < currentMedianValue ) ){
-            this.moveMedianToTheLeft();
-        }
-    }
-}
+ }
 
 
 class RTS{
@@ -326,28 +134,29 @@ class RTS{
         this.seed = seed;
         this.rand = new Random();
         this.rand.setSeed( seed );
+        this.createInitialTree();
     }
 
-    public void generateInitialPool(){
-        this.k = this.generateRandomK();
+    void createInitialTree(){
+        this.k = this.produceRandomK();
         char[] initialPoolOfInfos = new char[ this.k ];
         int[] initialPoolOfKeys = new int[ this.k ];
 
         for( int i=0; i<this.k; i++ ){
-            initialPoolOfInfos[i] = generateRandomChar();
+            initialPoolOfInfos[i] = produceRandomCharacter();
             initialPoolOfKeys[i] = this.rand.nextInt( 100 );
         }
    
         this.holder = new BinaryTree( initialPoolOfKeys, initialPoolOfInfos, k );     
     }
 
-    private char generateRandomChar(){
+    char produceRandomCharacter(){
     
          return (char)(rand.nextInt(26) + 'a');
     
     }
 
-    private int generateRandomK(){
+    int produceRandomK(){
         int k = rand.nextInt( 27 - 11 ) + 11;
         if( k % 2 == 0 )
             k += 1;
@@ -355,40 +164,42 @@ class RTS{
         return k;
     }
 
-    public void newPairGeneration(){
-        //boolean wasThisPairAccepted = false; 
-        //while( wasThisPairAccepted == false ){
-            int newKey = this.rand.nextInt();
-            char newInfo = this.generateRandomChar();
-            if( holder.isPresent( newKey ) ){
-        //        wasThisPairAccepted = true;
-                this.holder.replaceInformation( newKey, newInfo );
-            }
-        //}
+    private boolean insertRandomPair(  ){
+        int newKey = this.rand.nextInt(); 
+        char newInfo = this.produceRandomCharacter();
+        if( holder.isPresent( newKey ) ){
+            this.holder.replaceInformation( newKey, newInfo );
+            return true;
+        }
+        return false;
     }
 
-    public void newPairKTimes(){
+    void kRandomPairs(){
         for( int i=0; i< this.k; i++ )
-            this.newPairGeneration();
+            this.insertRandomPair();
     }
 
-    public void print(){
+    void display(){
         this.holder.printInOrder();
         System.out.printf("K = %d\n", this.k );
         System.out.printf("Initial seed: %d\n", this.seed );
+    }
+
+    void printMeddianValue(){
+        System.out.println( "median value: " );
+        this.holder.printNodeWithMedianKey();
     }
 }
 
 
 class Algorithm1{
 
-    public void main( String args[] ){
+    public static void main( String args[] ){
         
         Locale.setDefault(Locale.US);
         RTS rts = new  RTS( 570049 );
-        rts.generateInitialPool();
-        rts.newPairKTimes();
-
+        rts.kRandomPairs();
+        rts.display();
     }
 }
 
