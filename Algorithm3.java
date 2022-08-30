@@ -3,16 +3,16 @@
 //
 //Analyses of complexity:
 //  - O(n) where n stands for the number of loads
-//  - Because we iterate over the weights only one time
+//  Because we iterate over the weights only one time
 
 import java.util.Locale;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.io.FileReader;
 import java.util.Scanner;
 
 class Solver{
 
-    ArrayList<Integer> answer;
+    LinkedList<Integer> answer;
     int numberOfIterations;
     int ferryCapacity;
     int numberOfVehicles;
@@ -24,7 +24,7 @@ class Solver{
         this.numberOfVehicles = numberOfVehicles;
         this.ferryCapacity = ferryCapacity;
         this.weights = weights;
-        this.answer = new ArrayList<Integer>();
+        this.answer = new LinkedList<Integer>();
         this.numberOfTrips = 0;
     }
 
@@ -42,10 +42,13 @@ class Solver{
             this.answer.add( currentLoad );
     }
 
-    public void displayResult(  ){
+    public void displayResult(){
         System.out.printf( "Number of trips: %d\n", this.answer.size() );
-        for( int i=0; i< this.answer.size() ;i++ )
-            System.out.printf("Total load per trip number %d: %d\n", i+1, this.answer.get(i));
+        int i=0;
+        for( int load : answer ){
+            i++;
+            System.out.printf("Total load per trip number %d: %d\n", i, answer );
+        }
         System.out.printf("Number of iterations of the algorithm: %d\n", this.numberOfVehicles );
         System.out.printf("Computational cost of the algorithm: O(n)\n");
     }
