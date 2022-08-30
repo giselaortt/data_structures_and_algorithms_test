@@ -8,27 +8,27 @@
 import java.util.Scanner;
 import java.util.Locale;
 import java.io.FileReader; 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 
 
 class Area51{
     int selectorBound;
-    HashMap< Integer, ArrayList<Character>> selectormaps = new HashMap< Integer, ArrayList<Character>>();
-    HashMap< Character, ArrayList<Integer>> infomaps = new HashMap< Character, ArrayList<Integer>>();
+    HashMap< Integer, LinkedList< Character >> selectormaps = new HashMap< Integer, LinkedList< Character >>();
+    HashMap< Character, LinkedList< Integer >> infomaps = new HashMap< Character, LinkedList< Integer >>();
 
     Area51(){
-        this.selectormaps = new HashMap< Integer, ArrayList<Character>>();
-        this.infomaps = new HashMap< Character, ArrayList<Integer>>();
+        this.selectormaps = new HashMap< Integer, LinkedList< Character >>();
+        this.infomaps = new HashMap< Character, LinkedList< Integer >>();
     }
 
-    //
+    //O(n) = 1.
     public void addPair( int selector, char information ){
            if( this.isPresent( selector )==false )
-                this.selectormaps.put( selector, new ArrayList<Character>() );
+                this.selectormaps.put( selector, new LinkedList< Character >() );
            this.selectormaps.get( selector ).add( information );
            if( this.isPresent( information ) == false )
-               this.infomaps.put( information, new ArrayList<Integer>() );
+               this.infomaps.put( information, new LinkedList< Integer >() );
            this.infomaps.get( information ).add( selector );
     }
 
@@ -102,7 +102,6 @@ class Algorithm2{
             information = (char)tokens[1].charAt(0);
             solver.addPair( selector, information );
         }
-
 
         solver.isPresent( 27, 'c' );
         solver.isPresent( 30, 'c' );
