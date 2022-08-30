@@ -8,6 +8,14 @@ zip:
 	zip -r linked *.java *.in *.md *.pdf  Makefile
 
 
+all:
+	javac Algorithm1.java
+	javac Algorithm2.java
+	javac Algorithm3.java
+	javac Algorithm4.java
+	javac Algorithm5.java
+
+
 run5:
 	java Algorithm5 5.in
 
