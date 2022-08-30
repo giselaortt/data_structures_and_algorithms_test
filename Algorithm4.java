@@ -18,19 +18,20 @@ class Solver{
     int numberOfItems;
     int[] weights;
     final int capacity = 23;
-    HashSet< Integer > wasUsed;
     String[] names;
 
-    //For this use-case a Linked-LinkedList is the ideal data structure.
+    //the other option would be to use a boolean array,and a variable to count
+    //how many objects there are left. but this is more pretty.
+    HashSet< Integer > wasUsed;
+
+    //For this use-case a LinkedList is the ideal data structure.
     //First because several calls to list.add() function will happen,
     //which is more efficient on a LinkedList. Second because
     //we will make no calls to an intermediate element without the need
-    //to acess the previous ones.
+    //to acess the previous ones. The ArrayList would be less efficient on the add calls,
+    //and the Hash option would take more memory.
     LinkedList< LinkedList <Integer> > solution;
 
-    //
-    //
-    //
     Solver( int[] weights, String[] names, int size ){
         this.numberOfItems  = size;
         this.solution = new LinkedList< LinkedList<Integer> >();
@@ -40,8 +41,7 @@ class Solver{
     }
 
     // This is a wrapping function for the recursive knapsack solution. 
-    // 
-    private void knapsack( ){
+    private void knapsack(){
         int[][] intermediateStates = new int[ numberOfItems+1 ][ capacity+1 ];
         int i = this.numberOfItems;
         int w = this.capacity;
@@ -69,7 +69,7 @@ class Solver{
         if( this.wasUsed.contains( i ) || this.weights[i-1] > w )
             matrix[i][w] =  knapsack(i-1, w, matrix); 
 
-        else if( this.weights[i-1] + knapsack( i-1, w-this.weights[i-1], matrix ) >  knapsack(i-1, w, matrix) )
+        else if( this.weights[i-1] + knapsack( i-1, w-this.weights[i-1], matrix ) >  knapsack( i-1, w, matrix ) )
            matrix[i][w] = this.weights[i-1] + knapsack( i-1, w-this.weights[i-1], matrix ); 
 
         else
@@ -79,8 +79,9 @@ class Solver{
     }
 
     //reverse the algorithm in order to know wich items were included on current iteration from knapsack.
-    //wraping the recursion to make it more easily usable. 
-    //This function only serves to define the variables and allocate the hashset.
+    // - i -> objects from 1 to i are available
+    // - w -> capacity of suitcase
+    //
     //how the subproblems are defined:
     //
     //how the solutions to these subproblems are defined:
@@ -100,19 +101,11 @@ class Solver{
         }
     }
 
-    //how the subproblems are defined:
-    //
-    //how the solutions to these subproblems are defined:
-    //
-    //how the solutions are calculated in the base case:
-    //
-    //how the solutions are calculated in the general case:
-    //
+    // while the number of packed objects is smaller than the total of items,
+    // keep packing.
     public void solve(){
-       while( this.wasUsed.size() < this.numberOfItems ){
-           i++;
+       while( this.wasUsed.size() < this.numberOfItems )
            this.knapsack();
-       } 
     }
     
     public void display(){
@@ -156,5 +149,6 @@ class Algorithm4{
         solver.display();
     }
 }
+
 
 

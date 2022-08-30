@@ -3,12 +3,13 @@
 //  balanced tree. since there is no further insertion or deletion the tree structure will remain the same.
 //  only the keys of the elements will change.
 //  That is why there is no need to update the balancing and the median value.
+//  Because the tree is constructed in such a way that the right subtree and the left subtree have the same size (or 1 of diference),
+//  the root will always be the median value.
 //
 //Analyses of complexity:
 //
-//  Tree insertion and search is done with O( n ) = log(n)
+//  Tree search is done with O( n ) = log(n)
 //  Median access is done on O( n )  = 1
-//
 
 import java.util.Locale;
 import java.util.Random;
@@ -72,9 +73,7 @@ class BinaryTree{
             elements[i] = new Node( informations[i], keys[i] );
         }
 
-        //
-        //
-        //
+        //Sorting happens in O(n) = n*log n
         Arrays.sort( elements );
         int medianPosition = (int)((size)/2);
         this.root = elements[ medianPosition ];
@@ -82,7 +81,8 @@ class BinaryTree{
         this.root.right = constructSubtree( elements, medianPosition+1, numberOfElements );
     }
 
-    //Using exclusive interval on the end...
+    //  Recursive construction of the tree happens in O(n) = n.
+    //  Using inclusive interval on the beggining and exclusive interval on the end.
     private static Node constructSubtree( Node elements[], int begin, int end ){
         int middle = (int)( (end-begin)/2 + begin );
 

@@ -1,10 +1,11 @@
 //Use of algorithm:
 //
 //
+//
 //Analyses of complexity:
 //
 //
-
+//
 import java.util.Scanner;
 import java.util.Locale;
 import java.io.FileReader; 
@@ -32,7 +33,6 @@ class Area51{
            this.infomaps.get( information ).add( selector );
     }
 
-    //
     public void isPresent( int selector, char information ){
         if( this.isPresent( selector ) == false || this.isPresent( information ) == false ){
             System.out.println("element not present");
@@ -74,7 +74,7 @@ class Area51{
             System.out.println("empty list");
         else {
             int size = this.selectormaps.get( selector ).size();
-            for( int i=0; i<size; i++ )
+  //O(n) = 1.           for( int i=0; i<size; i++ )
                 System.out.printf("%c ", this.selectormaps.get( selector ).get( i ) );
             System.out.println();
         } 
@@ -117,5 +117,4 @@ class Algorithm2{
         solver.searchPerSelector( 30 );
         solver.searchPerSelector( 4 );
     }
-
 }
