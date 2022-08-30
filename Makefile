@@ -16,18 +16,22 @@ all:
 	javac Algorithm5.java
 
 
-run5:
+5:
+	javac Algorithm5.java
 	java Algorithm5 5.in
 
 
-run4:
+4:
+	javac Algorithm4.java
 	java Algorithm4 4.in
 
 
-run3:
+3:
+	javac Algorithm3.java
 	java Algorithm3 3.in
 
 
-run2:
+2:
+	javac Algorithm2.java
 	java Algorithm2 2.in
 
