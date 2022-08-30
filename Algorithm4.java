@@ -109,18 +109,17 @@ class Solver{
     //how the solutions are calculated in the general case:
     //
     public void solve(){
-
-     int i =0;   
-       while( this.wasUsed.size() < this.numberOfItems && i <= 10 ){
+       while( this.wasUsed.size() < this.numberOfItems ){
            i++;
            this.knapsack();
        } 
-    
     }
     
     public void display(){
-        for( int i=0; i< this.solution.size(); i++ ){
-            System.out.printf( "Suitcase: %d\n", i+1 );
+        int i=0;
+        for( LinkedList<Integer> suiticase : this.solution ){
+            i++;
+            System.out.printf( "Suitcase: %d\n", i );
             int suiticaseWeight = 0;
             for( int objectIndex : this.solution.get(i) ){
                 System.out.printf("%s %d\n", names[objectIndex-1], weights[objectIndex-1] );
