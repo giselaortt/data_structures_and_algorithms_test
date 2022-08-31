@@ -8,19 +8,19 @@ Considerations about the problems:
 
 2) hash table
     
-    - Here there were 2 options, to go for a hashmap or use ArrayList to simulate a hashmap. Arraylist might be better depending on how maps are implemented on java.
 
 3) greedy (very easy)
 
 
 4) dynamic programming (problem of the backpack)
 
+    - TO-DO: justify on the documentation why i opt in for linked lists instead of array list. 
 
 
 5) djikstra:
 
     - There are different ways to pass a function as a parameter. Lambda functions, callable. It is possible to change if explicitly stated that this is necessary.
 
-    - the waiting function to be passed for djakstra method should be of the type double function( int i, double t )
+    - Should the waiting time function be used to calculate the djikstra or only summed up on the end? 
 
 

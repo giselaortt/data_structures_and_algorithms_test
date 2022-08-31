@@ -53,7 +53,7 @@ class Graph{
     final int numberOfEdges;
     int[] previous;
     float time;
-    float[] distances;
+    float[] accumulatedCosts;
     PriorityQueue< Edge > lowestValueEdge;
     LinkedList< Integer > path;
     ArrayList< ArrayList< Edge >> adjacencyList;
@@ -66,7 +66,7 @@ class Graph{
         this.numberOfEdges      = numberOfEdges;
         this.previous           = new int[ numberOfVertices ];
         this.lowestValueEdge    = new PriorityQueue< Edge >();
-        this.distances          = new float[this.numberOfVertices];
+        this.accumulatedCosts          = new float[this.numberOfVertices];
         this.visited            = new boolean[ numberOfVertices ];
         this.path               = new LinkedList<Integer>();
         this.adjacencyList      = new ArrayList< ArrayList< Edge > >( );
@@ -92,7 +92,7 @@ class Graph{
         //we will start on one because the initial vertex is 0, and therefore 
         //the distance of the 0 vertex is 0.
         for( int i=1; i<this.numberOfVertices; i++ )
-            distances[i] = Float.MAX_VALUE;
+            accumulatedCosts[i] = Float.MAX_VALUE;
 
         while( this.lowestValueEdge.isEmpty() == false ){
             int currentVertex = lowestValueEdge.poll().vertex;
@@ -102,9 +102,9 @@ class Graph{
                 if( visited[ nextVertex ]  )
                     continue;
                 this.lowestValueEdge.add( edge );
-                float tempDistance = distances[ currentVertex ] + edge.cost;
-                if( tempDistance < distances[ nextVertex ] ){
-                    distances[ nextVertex ] = tempDistance;
+                float tempDistance = accumulatedCosts[ currentVertex ] + edge.cost;
+                if( tempDistance < accumulatedCosts[ nextVertex ] ){
+                    accumulatedCosts[ nextVertex ] = tempDistance;
                     previous[ nextVertex ] = currentVertex;
                 }
             }
@@ -125,15 +125,22 @@ class Graph{
     private void calculateTotalTime(){
         this.time = (float)0.0;
         int currentVertex = 0;
+        int nextVertex = 0;
+        int penultimateVertex = this.previous[ this.targetVertex ];
         Iterator<Integer> iterator = this.path.iterator();
 
-        while( currentVertex != this.targetVertex && iterator.hasNext() ){
+        while( currentVertex != penultimateVertex && iterator.hasNext() ){
+            nextVertex = iterator.next();
             this.time += this.getWaitingTime( currentVertex, this.time  );
-            currentVertex = iterator.next();
+            this.time += this.accumulatedCosts[ nextVertex ] - this.accumulatedCosts[ currentVertex ]; 
+            currentVertex = nextVertex;
         }
 
-        if( currentVertex != this.targetVertex )
-            this.time = (float)-1.0;
+        nextVertex = iterator.next();
+        this.time += this.accumulatedCosts[ nextVertex ] - this.accumulatedCosts[ currentVertex ]; 
+
+//        if( currentVertex != this.targetVertex )
+//            this.time = (float)-1.0;
     }
 
     public void solve(){

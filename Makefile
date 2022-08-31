@@ -35,3 +35,7 @@ all:
 	javac Algorithm2.java
 	java Algorithm2 2.in
 
+1:
+	javac Algorithm1.java
+	java Algorithm1
+
