@@ -110,15 +110,15 @@ class Solver{
     
     public void display(){
         int i=0;
-        for( LinkedList<Integer> suiticase : this.solution ){
+        for( LinkedList<Integer> suitcase : this.solution ){
             i++;
             System.out.printf( "Suitcase: %d\n", i );
-            int suiticaseWeight = 0;
-            for( int objectIndex : this.solution.get(i) ){
+            int suitcaseWeight = 0;
+            for( int objectIndex : suitcase ){
                 System.out.printf("%s %d\n", names[objectIndex-1], weights[objectIndex-1] );
-                suiticaseWeight += weights[objectIndex-1];
+                suitcaseWeight += weights[objectIndex-1];
             }
-            System.out.printf( "Residual capacity: %d\n", this.capacity - suiticaseWeight );
+            System.out.printf( "Residual capacity: %d\n", this.capacity - suitcaseWeight );
             System.out.println();
         }
     }

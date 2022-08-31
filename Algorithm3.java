@@ -47,7 +47,7 @@ class Solver{
         int i=0;
         for( int load : answer ){
             i++;
-            System.out.printf("Total load per trip number %d: %d\n", i, answer );
+            System.out.printf("Total load per trip number %d: %d\n", i, load );
         }
         System.out.printf("Number of iterations of the algorithm: %d\n", this.numberOfVehicles );
         System.out.printf("Computational cost of the algorithm: O(n)\n");

@@ -56,7 +56,6 @@ class Area51{
         return this.infomaps.containsKey(information);
     }
 
-    //
     public void searchPerInfo( char information ){
         if( this.isPresent( information ) == false ){
             System.out.println("empty list");
@@ -68,13 +67,13 @@ class Area51{
         }
     }
 
-    //
     public void searchPerSelector( int selector ){
         if( this.isPresent( selector ) == false )
             System.out.println("empty list");
         else {
             int size = this.selectormaps.get( selector ).size();
-  //O(n) = 1.           for( int i=0; i<size; i++ )
+            for( int i=0; i<size; i++ )
+
                 System.out.printf("%c ", this.selectormaps.get( selector ).get( i ) );
             System.out.println();
         } 
