@@ -1,7 +1,9 @@
 //Use of algorithm:
 //
 //
+//
 //Analyses of complexity:
+//
 //
 //
 import java.util.Locale;
@@ -11,102 +13,182 @@ import java.util.Scanner;
 import java.lang.reflect.Method;
 import java.lang.Double;
 import java.lang.Integer;
+import java.lang.Float;
 import java.util.function.*;
 import java.util.*;
+import java.util.LinkedList;
 
 
-class Edge{
-    Edge(){}
-}
+class Edge implements Comparable<Edge>{
+    int vertex;
+    //int secondVertex;
+    float cost;
 
-
-class EdgeComparator implements Comparator<Edge>{
-    public int compare( Edge first, Edge second ){}
-}
-
-
-//There are 2 ways to represent a Graph, eighter as adjacency list or a matrix. Because we do not know wether the Graph is dense,
-//it makes sense to use an adjacency list, to decrease time and space complexity for the cases when the graph is sparse, and have equal performance
-//when the graph is dense. 
-class Graph{
-
-    ArrayList<ArrayList<Integer>> edges;
-    PriorityQueue<Edges> edges = new PriorityQueue<Edges>();
-    //pq.add();
-    //pq.peek(); // acess 
-    //pq.poll(); //  acess and delete
-
-    public Graph( int numberOfVertexes ){
-        edges = new ArrayList< ArrayList< Integer > >();
-        for( int i=0; i<numberOfVertexes; i++ ){
-            edges.add( new ArrayList< Integer >() );
-        } 
+    Edge( int vertex, float cost ){
+        this.vertex = vertex;
+        //this.secondVertex = secondVertex;
+        this.cost = cost;
     }
 
-    public void addEdge( int vertex, int otherVertex, double value ){
-        edges.get(vertex).add( otherVertex );
+    @Override
+    public int compareTo( Edge second ){
+        if( this.cost > second.cost )
+            return -1;
+        else
+            return 1;
+    }
+}
+
+
+//There are 2 ways to represent a Graph, eighter as adjacency list or a matrix.
+//Because we do not know wether the Graph is dense,
+//it makes sense to use an adjacency list, to decrease time and space,
+//complexity for the cases when the graph is sparse, and have equal performance
+//when the graph is dense. 
+class Graph{
+    boolean visited[];
+    final int targetVertex;
+    final int initialVertex;
+    final int numberOfVertices;
+    final int numberOfEdges;
+    int[] previous;
+    float time;
+    float[] distances;
+    PriorityQueue< Edge > lowestValueEdge;
+    LinkedList< Integer > path;
+    ArrayList< ArrayList< Edge >> adjacencyList;
+
+    Graph( int numberOfVertices, int numberOfEdges ){
+
+        this.targetVertex       = numberOfVertices-1;
+        this.initialVertex      = 0;
+        this.numberOfVertices   = numberOfVertices;
+        this.numberOfEdges      = numberOfEdges;
+        this.previous           = new int[ numberOfVertices ];
+        this.lowestValueEdge    = new PriorityQueue< Edge >();
+        this.distances          = new float[this.numberOfVertices];
+        this.visited            = new boolean[ numberOfVertices ];
+        this.path               = new LinkedList<Integer>();
+        this.adjacencyList      = new ArrayList< ArrayList< Edge > >( );
+        this.adjacencyList.ensureCapacity( numberOfVertices );
+
+        for( int i=0; i<numberOfVertices; i++ ){
+            this.adjacencyList.add( new ArrayList< Edge >() );
+            this.adjacencyList.get(i).ensureCapacity( numberOfVertices );
+        }
+    }
+
+    public void addEdge( int vertexId, int otherVertex, float cost ){
+        adjacencyList.get(vertexId).add( new Edge( otherVertex, cost ) );
+    }
+
+    static float getWaitingTime( int i, float time ){
+        return ExampleWaitingFunction.waitingTime( i, time );
     }
 
     //Implementation of Djakstra`s algorithm.
-    //How to pass a function as a parameter and receive it here ??
-    public float calculateMinimalPath( int initialVertex, int targetVertex, BiFunction< Integer, Double, Double > wait ){
-    //public static float calculateMinimalPath( int initialVertex, int targetVertex, Method wait ){
-    
-        double waitingTime = wait.apply( 0, 0.53 );
-        //double waitingTime = wait.invoke( 0, 0.53 );
+    private void findMinimalPath(){
+        this.lowestValueEdge.add( new Edge( this.initialVertex, 0 ) );
+        //we will start on one because the initial vertex is 0, and therefore 
+        //the distance of the 0 vertex is 0.
+        for( int i=1; i<this.numberOfVertices; i++ )
+            distances[i] = Float.MAX_VALUE;
 
-        return 5;
+        while( this.lowestValueEdge.isEmpty() == false ){
+            int currentVertex = lowestValueEdge.poll().vertex;
+            this.visited[ currentVertex ] = true;
+            for( Edge edge : this.adjacencyList.get( currentVertex ) ){
+                int nextVertex = edge.vertex;
+                if( visited[ nextVertex ]  )
+                    continue;
+                this.lowestValueEdge.add( edge );
+                float tempDistance = distances[ currentVertex ] + edge.cost;
+                if( tempDistance < distances[ nextVertex ] ){
+                    distances[ nextVertex ] = tempDistance;
+                    previous[ nextVertex ] = currentVertex;
+                }
+            }
+        }
     }
 
+    // O(v) = v 
+    private void reconstructPath( int[] previous ){
+        int currentVertex = this.targetVertex;
+        while( currentVertex != this.initialVertex ){
+            this.path.addFirst(currentVertex);
+            currentVertex = previous[ currentVertex ];
+        }
+    }
+
+    // O(v) = v 
+    private void calculateTotalTime(){
+        this.time = (float)0.0;
+        int currentVertex = 0;
+        Iterator<Integer> iterator = this.path.iterator();
+
+        while( currentVertex != this.targetVertex && iterator.hasNext() ){
+            this.time += this.getWaitingTime( currentVertex, this.time  );
+            currentVertex = iterator.next();
+        }
+
+        if( currentVertex != this.targetVertex )
+            this.time = (float)-1.0;
+    }
+
+    public void solve(){
+        this.findMinimalPath();
+        this.reconstructPath( previous );
+        this.calculateTotalTime();
+    }
+
+    public void displayAnswer(){
+        if( this.time < 0 ){
+            System.out.println("Unrecheable.");
+            return;
+        }
+
+        System.out.println( this.time );
+        for( int vertex : this.path )
+            System.out.printf( "%d ", vertex );
+        System.out.println();
+    }
 }
 
 
-//Placeholder for the waiting function that will ge given.
+//Placeholder for the waiting function that will be given.
 class ExampleWaitingFunction{
-
-    double waitingTime( int i, double time ){
-        return 0.5;
+    public static float waitingTime( int i, float time ){
+        return (float)0.5;
     }
-
 }
-
 
 
 class Algorithm5{
 
     public static void main( String args[] ) throws Exception {
-        
         Locale.setDefault(Locale.US);
-        int numberOfVertexes;
-        int number_of_edges;
+        int numberOfVertices, numberOfEdges;
+        int firstVertex, secondVertex;
+        float cost;
         FileReader reader = new FileReader( args[0] );
         Scanner scan = new Scanner( reader );
-        numberOfVertexes = scan.nextInt();
+        numberOfVertices = scan.nextInt();
         scan.nextLine();
-        number_of_edges = scan.nextInt();
+        numberOfEdges = scan.nextInt();
         scan.nextLine();
-        int firstVertex, secondVertex;
-        Graph graph = new Graph( numberOfVertexes );
+        Graph graph = new Graph( numberOfVertices, numberOfEdges );
 
-        //Method method;
-        //Object[] parameters = {Integer.class, Double.class};
-        //method = ExampleWaitingFunction.class.getMethod("waitingTime", parameters );
-
-        for( int i=0; i<number_of_edges; i++ ){
+        for( int i=0; i<numberOfEdges; i++ ){
             firstVertex = scan.nextInt();
             secondVertex = scan.nextInt();
-            double weight = scan.nextFloat();
+            cost = scan.nextFloat();
             scan.nextLine();
-            //change on the third parameter to pass the real waiting function.
-            graph.addEdge( firstVertex, secondVertex, weight );
+            graph.addEdge( firstVertex, secondVertex, cost );
         }
     
-        //System.out.println(graph.calculateMinimalPath(0, numberOfVertexes-1, method));
-        //graph.calculateMinimalPath( 0, numberOfVertexes-1, method );
-        //graph.calculateMinimalPath( 0, numberOfVertexes-1, ExampleWaitingFunction::waitingTime );
-
+        graph.solve();
+        graph.displayAnswer();
     }
 }
-
 
 
