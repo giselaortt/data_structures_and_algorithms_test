@@ -33,9 +33,9 @@ class Edge implements Comparable<Edge>{
     @Override
     public int compareTo( Edge second ){
         if( this.cost > second.cost )
-            return -1;
-        else
             return 1;
+        else
+            return -1;
     }
 }
 
@@ -118,6 +118,7 @@ class Graph{
             this.path.addFirst(currentVertex);
             currentVertex = previous[ currentVertex ];
         }
+        this.path.addFirst(currentVertex);
     }
 
     // O(v) = v 
@@ -158,7 +159,7 @@ class Graph{
 //Placeholder for the waiting function that will be given.
 class ExampleWaitingFunction{
     public static float waitingTime( int i, float time ){
-        return (float)0.5;
+        return (float) 5.0;
     }
 }
 
