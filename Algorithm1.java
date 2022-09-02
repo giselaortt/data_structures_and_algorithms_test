@@ -8,9 +8,10 @@
 //
 //Analyses of complexity:
 //
-//  Tree search is done with O( n ) = log(n)
-//  Median access is done on O( n )  = 1
-
+// Tree search is done with O( n ) = log(n)
+// Median access is done on O( n ) = 1
+// Tree building is done on O( n ) = n, because each node needs to be accessed only once.
+// Ordering of the array of all elements before building the tree is done on O( n ) = n * log n.
 import java.util.Locale;
 import java.util.Random;
 import java.util.Arrays;
@@ -24,6 +25,10 @@ class Pair{
     Pair( int key, char information ){
         this.key = key;
         this.information = information;
+    }
+
+    void display(){
+        System.out.printf("<%c, %d>\n", this.information, this.key);
     }
 }
 
@@ -58,9 +63,6 @@ class Node implements Comparable<Node> {
 }
 
 
-//
-//
-//
 class BinaryTree{
     Node root;
     int numberOfElements;
@@ -83,6 +85,10 @@ class BinaryTree{
 
     //  Recursive construction of the tree happens in O(n) = n.
     //  Using inclusive interval on the beggining and exclusive interval on the end.
+    //  This function devides an array on two based on the median value,
+    //  the median value enters as the root, it then recursivelly constructs the left array 
+    //  as a tree and places it as the left child, then it recursivelly constructs the right
+    //  array as the right subtree.
     private static Node constructSubtree( Node elements[], int begin, int end ){
         int middle = (int)( (end-begin)/2 + begin );
 
@@ -103,6 +109,7 @@ class BinaryTree{
         return rootOfSubtree;
     }
 
+    //This is a wrapping function to improve usability of the following recursive function.
     public char get( int key ){
         Node temporary = this.get( key, this.root );
         return temporary.item.information;
@@ -141,12 +148,12 @@ class BinaryTree{
         if( node == null )
             return;
         printInOrder( node.left );
-        System.out.printf( "< %d, %c >\n", node.getKey(), node.getInformation() );
+        node.item.display();
         printInOrder( node.right );
     }
 
     public void printNodeWithMedianKey(){
-        System.out.printf( "< %d, %c >\n", this.root.getKey(), this.root.getInformation() );
+        this.root.item.display();
     }
 
  }
@@ -185,7 +192,7 @@ class SensorSimulator{
     }
 
     Pair produceRandomPair(){
-        int key = this.rand.nextInt();
+        int key = this.produceRandomKey();
         char info = this.produceRandomCharacter();
         Pair answer = new Pair( key, info );
 
@@ -194,15 +201,13 @@ class SensorSimulator{
 }
 
 
-//
-//
-//
 class RTS{
 
     BinaryTree holder;
     SensorSimulator sensor;
-    int k;
     int seed;
+    //k is the variable as defined in the problem description.
+    int k;
 
     RTS( int seed ){
         this.sensor = new SensorSimulator( seed );
@@ -223,24 +228,25 @@ class RTS{
         this.holder = new BinaryTree( initialPoolOfKeys, initialPoolOfInfos, k );     
     }
 
-    private boolean insertRandomPair(){
-        int newKey = this.sensor.produceRandomKey(); 
-        char newInfo = this.sensor.produceRandomCharacter();
+    //Generates n new pairs until one of them is accepted as an insertion.
+    private Pair insertRandomPair(){
+        Pair randomPair = this.sensor.produceRandomPair();
+        int newKey = randomPair.key;
+        char newInfo = randomPair.information;
 
         if( holder.isPresent( newKey ) ){
             this.holder.replaceInformation( newKey, newInfo );
-
-            return true;
         }
 
-        return false;
+        return randomPair;
     }
 
     void kRandomPairs(){
-        boolean sucess = false;
-        for( int i=0; i< this.k; i++ )
-            while( !sucess )
-                sucess = this.insertRandomPair();
+        for( int i=0; i< this.k; i++ ){
+             Pair pair = this.insertRandomPair();
+             pair.display(); //I understood we should print the k generations, is that correct ?
+        }
+        System.out.println();
     }
 
     void display(){
