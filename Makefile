@@ -5,7 +5,7 @@ clean:
 
 
 zip:
-	zip -r linked *.java *.in *.md *.pdf  Makefile
+	zip -r freelance *.java *.in *.md *.pdf  Makefile
 
 
 all:
@@ -18,24 +18,24 @@ all:
 
 5:
 	javac Algorithm5.java
-	java Algorithm5 5.in
+	java -cp . Algorithm5 5.in
 
 
 4:
 	javac Algorithm4.java
-	java Algorithm4 4.in
+	java -cp . Algorithm4 4.in
 
 
 3:
 	javac Algorithm3.java
-	java Algorithm3 3.in
+	java -cp . Algorithm3 3.in
 
 
 2:
 	javac Algorithm2.java
-	java Algorithm2 2.in
+	java -cp . Algorithm2 2.in
 
 1:
 	javac Algorithm1.java
-	java Algorithm1
+	java -cp . Algorithm1
 
