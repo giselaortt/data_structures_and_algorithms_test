@@ -1,11 +1,26 @@
-//Use of algorithm:
-//
-//
-//
-//Analyses of complexity:
-//
-//
-//
+/*
+Use of Data Structures:
+
+    There are 2 ways to represent a Graph, either as an adjacency list or a matrix. 
+    Because we do not know whether the Graph is dense, it makes sense to use an
+    adjacency list. The complexity for the cases when the graph is sparse, 
+    and have equal performance when the graph is dense.
+    To auxiliate the implementation a Priority Queue was used.
+    To represent the adjacency list the ArrayList of java was chosen, because it uses
+    a sequential allocation of memory, allowing for the O(n) = 1 accessing of elements.
+    In order to avoid the reallocation of memory(which could cause the appending on 
+    the list to become O(n) = n), it was used the ensureCapacity function with the 
+    maximum size that the list could possibly contain. The use of this function 
+    dramatically decreases the complexity in the worst case scenario.
+
+
+Asymptotic Analysis:
+
+    Defining E = number of edges and V = number of Vertices.
+
+    For the Dijkstra algorithm: O (V + E * log V)
+
+*/
 import java.util.Locale;
 import java.util.ArrayList;
 import java.io.FileReader; 
@@ -21,15 +36,19 @@ import java.util.LinkedList;
 
 class Edge implements Comparable<Edge>{
     int vertex;
-    //int secondVertex;
     float cost;
 
     Edge( int vertex, float cost ){
         this.vertex = vertex;
-        //this.secondVertex = secondVertex;
         this.cost = cost;
     }
 
+    void addToCost( float newCost ){
+        this.cost = this.cost + newCost;
+    }
+
+    //This comparator is designed to make the priority queue sort on ascending
+    //order.
     @Override
     public int compareTo( Edge second ){
         if( this.cost > second.cost )
@@ -40,13 +59,9 @@ class Edge implements Comparable<Edge>{
 }
 
 
-//There are 2 ways to represent a Graph, eighter as adjacency list or a matrix.
-//Because we do not know wether the Graph is dense,
-//it makes sense to use an adjacency list, to decrease time and space,
-//complexity for the cases when the graph is sparse, and have equal performance
-//when the graph is dense. 
 class Graph{
     boolean visited[];
+    boolean isRecheable;
     final int targetVertex;
     final int initialVertex;
     final int numberOfVertices;
@@ -66,7 +81,7 @@ class Graph{
         this.numberOfEdges      = numberOfEdges;
         this.previous           = new int[ numberOfVertices ];
         this.lowestValueEdge    = new PriorityQueue< Edge >();
-        this.accumulatedCosts          = new float[this.numberOfVertices];
+        this.accumulatedCosts   = new float[this.numberOfVertices];
         this.visited            = new boolean[ numberOfVertices ];
         this.path               = new LinkedList<Integer>();
         this.adjacencyList      = new ArrayList< ArrayList< Edge > >( );
@@ -83,12 +98,14 @@ class Graph{
     }
 
     static float getWaitingTime( int i, float time ){
+        //change here to get the real waiting time function.
         return ExampleWaitingFunction.waitingTime( i, time );
     }
 
     //Implementation of Djakstra`s algorithm.
     private void findMinimalPath(){
         this.lowestValueEdge.add( new Edge( this.initialVertex, 0 ) );
+
         //we will start on one because the initial vertex is 0, and therefore 
         //the distance of the 0 vertex is 0.
         for( int i=1; i<this.numberOfVertices; i++ )
@@ -97,10 +114,13 @@ class Graph{
         while( this.lowestValueEdge.isEmpty() == false ){
             int currentVertex = lowestValueEdge.poll().vertex;
             this.visited[ currentVertex ] = true;
+            float wait = getWaitingTime( currentVertex, accumulatedCosts[ currentVertex ] );
+
             for( Edge edge : this.adjacencyList.get( currentVertex ) ){
                 int nextVertex = edge.vertex;
                 if( visited[ nextVertex ]  )
                     continue;
+                edge.addToCost( wait );
                 this.lowestValueEdge.add( edge );
                 float tempDistance = accumulatedCosts[ currentVertex ] + edge.cost;
                 if( tempDistance < accumulatedCosts[ nextVertex ] ){
@@ -109,52 +129,42 @@ class Graph{
                 }
             }
         }
+        this.time = this.accumulatedCosts[ this.targetVertex ];
     }
 
-    // O(v) = v 
-    private void reconstructPath( int[] previous ){
+    private void isRecheable(){
+        if( this.accumulatedCosts[ this.targetVertex ] == Float.MAX_VALUE )
+            this.isRecheable = false;
+        else
+            this.isRecheable = true;
+    }
+
+    // O(v) = v
+    // because the djikstra`s algorithm saves the path from last to first and it
+    // is required to print it form first to last, we reverse it to get the path on
+    // the right order. because it is only iterated on one order (no access to inermediate
+    // elements), in order to save on the performance, a linked structure is better suited,
+    // such as linked list or a stack. 
+    private void reconstructPath( ){
         int currentVertex = this.targetVertex;
         while( currentVertex != this.initialVertex ){
             this.path.addFirst(currentVertex);
-            currentVertex = previous[ currentVertex ];
+            currentVertex = this.previous[ currentVertex ];
         }
         this.path.addFirst(currentVertex);
     }
 
-    // O(v) = v 
-    private void calculateTotalTime(){
-        this.time = (float)0.0;
-        int currentVertex = 0;
-        int nextVertex = 0;
-        int penultimateVertex = this.previous[ this.targetVertex ];
-        Iterator<Integer> iterator = this.path.iterator();
-
-        while( currentVertex != penultimateVertex && iterator.hasNext() ){
-            nextVertex = iterator.next();
-            this.time += this.getWaitingTime( currentVertex, this.time  );
-            this.time += this.accumulatedCosts[ nextVertex ] - this.accumulatedCosts[ currentVertex ]; 
-            currentVertex = nextVertex;
-        }
-
-        nextVertex = iterator.next();
-        this.time += this.accumulatedCosts[ nextVertex ] - this.accumulatedCosts[ currentVertex ]; 
-
-//        if( currentVertex != this.targetVertex )
-//            this.time = (float)-1.0;
-    }
-
     public void solve(){
         this.findMinimalPath();
-        this.reconstructPath( previous );
-        this.calculateTotalTime();
+        this.isRecheable();
+        this.reconstructPath( );
     }
 
     public void displayAnswer(){
-        if( this.time < 0 ){
-            System.out.println("Unrecheable.");
+        if( this.isRecheable == false ){
+            System.out.println("unrecheable");
             return;
         }
-
         System.out.println( this.time );
         for( int vertex : this.path )
             System.out.printf( "%d ", vertex );
