@@ -1,5 +1,5 @@
 //Use of algorithm:
-//
+// Simple array.
 //
 //Analyses of complexity:
 //  - O(n) where n stands for the number of loads
@@ -28,6 +28,7 @@ class Solver{
         this.numberOfTrips = 0;
     }
 
+    //add the load to the current boat as long as possible, and start another boat otherwise.
     public void solve(){
         int currentLoad = 0;
         for( int i=0; i<this.numberOfVehicles; i++ ){

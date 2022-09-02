@@ -1,9 +1,47 @@
 //Use of algorithm:
 //
+// Algorithm 4 is an adaptation of the widely known rucksack problem. 
+// In this case, the objects do not have different values, so instead
+// of implementing the maximization of values, the solution was changed to
+// maximize the total weight of the backpack.
 //
 //Analyses of complexity:
 //
-//
+// Defining n as the number of objects and w as the maximum capacity
+// for 1 suitcase. For 1 suitcase it was used the widely known algorithm of the
+// knapsack, that has complexity O(n) = n *  w. 
+// Since the problem contains at most n suitcases (one per object if they could
+// not possibly fit together), and for each suitcase there will be a call for
+// the conventional knapsack problem, this means that the fina solution has
+// complexity O(n) = n * n * w.
+// On  the reconstruction of the knapsack set of items: O(n) = w + n.
+// (because it does not go for every weight and object, and stops when any reaches 0).
+
+
+/*
+* Definition of subproblems:
+
+The first subproblem consists of maximizing the use for 1 suitcase. Secondly we
+must reconstruct the set of items that were included on the suitcase for each 
+iteration. Finally, repeat the algorithm until all the items have been placed.
+
+* How the solutions to these subproblems are defined:
+
+The knapsack solution is based on a knapsack of smaller capacity and a knapsack
+problem with a smaller set of items.
+To get the set of items the algorithm is reversed engineered with the values produced.
+
+* How the solutions are calculated in the base case:
+When the current capacity or the number of items are zero, the solution is also zero.
+When the current item does not fit on the current capacity, the algorithm keeps 
+the solution for the same capacity without the current item.
+
+*  How the solutions are calculated in the general case:
+The algorithm chooses between including the current item in the sack or not, 
+depending on which option produces the smallest residual space.
+*/
+
+
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -78,18 +116,6 @@ class Solver{
         return matrix[i][w];
     }
 
-    //reverse the algorithm in order to know wich items were included on current iteration from knapsack.
-    // - i -> objects from 1 to i are available
-    // - w -> capacity of suitcase
-    //
-    //how the subproblems are defined:
-    //
-    //how the solutions to these subproblems are defined:
-    //
-    //how the solutions are calculated in the base case:
-    //
-    //how the solutions are calculated in the general case:
-    //
     private void reconstruct( int[][] matrix, int i, int w, LinkedList<Integer> currentSet ){
         if( i==0 || w==0 )
             return;

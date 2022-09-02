@@ -1,11 +1,17 @@
-//Use of algorithm:
+//Use of structures:
 //
-//
+// 2 hash tables that receive linked lists.
+// we need two hashs in order for both accesses to happen in O(1)
+// (the access from  key and the access from information).
+// They receive linked lists in order to keep several infos for the same key
+// ( or vice versa ).
 //
 //Analyses of complexity:
 //
+// Insertion is done in O( n ) = 1 (access of element of Hash tables + append on a linked list).
 //
 //
+
 import java.util.Scanner;
 import java.util.Locale;
 import java.io.FileReader; 
@@ -24,6 +30,8 @@ class Area51{
     }
 
     //O(n) = 1.
+    //Allocates the LinkedList if none is available for the given pair, and adds the new pair
+    //to both tables.
     public void addPair( int selector, char information ){
            if( this.isPresent( selector )==false )
                 this.selectormaps.put( selector, new LinkedList< Character >() );
@@ -33,6 +41,7 @@ class Area51{
            this.infomaps.get( information ).add( selector );
     }
 
+    //O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 1.
     public void isPresent( int selector, char information ){
         if( this.isPresent( selector ) == false || this.isPresent( information ) == false ){
             System.out.println("element not present");
@@ -56,6 +65,7 @@ class Area51{
         return this.infomaps.containsKey(information);
     }
 
+    //O(n) = 1 + number of pairs having the value of the given information, satisfing condition 2.
     public void searchPerInfo( char information ){
         if( this.isPresent( information ) == false ){
             System.out.println("empty list");
@@ -67,6 +77,7 @@ class Area51{
         }
     }
 
+    //O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 3.
     public void searchPerSelector( int selector ){
         if( this.isPresent( selector ) == false )
             System.out.println("empty list");
