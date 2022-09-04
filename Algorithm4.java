@@ -97,6 +97,8 @@ class Solver{
         }
     }
 
+
+    //RECURSSION
     private int knapsack( int i, int w, int[][] matrix ){
         if( i==0 || w==0 )
             return 0;
@@ -116,6 +118,7 @@ class Solver{
         return matrix[i][w];
     }
 
+    //RECURSSION
     private void reconstruct( int[][] matrix, int i, int w, LinkedList<Integer> currentSet ){
         if( i==0 || w==0 )
             return;

@@ -1,7 +1,9 @@
 //Use of algorithm:
+//
 // Simple array.
 //
 //Analyses of complexity:
+//
 //  - O(n) where n stands for the number of loads
 //  Because we iterate over the weights only one time
 

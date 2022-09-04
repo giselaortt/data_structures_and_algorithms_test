@@ -83,6 +83,7 @@ class BinaryTree{
         this.root.right = constructSubtree( elements, medianPosition+1, numberOfElements );
     }
 
+    //RECURSSION
     //  Recursive construction of the tree happens in O(n) = n.
     //  Using inclusive interval on the beggining and exclusive interval on the end.
     //  This function devides an array on two based on the median value,
@@ -115,6 +116,7 @@ class BinaryTree{
         return temporary.item.information;
     }
 
+    //RECURSSION
     private Node get( int key, Node node ){
         if( node == null )
             return null;
@@ -144,6 +146,7 @@ class BinaryTree{
         printInOrder( this.root );
     }
 
+    //RECURSSION
     private void printInOrder( Node node ){
         if( node == null )
             return;

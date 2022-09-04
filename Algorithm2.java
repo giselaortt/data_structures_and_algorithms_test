@@ -1,17 +1,18 @@
-//Use of structures:
-//
-// 2 hash tables that receive linked lists.
-// we need two hashs in order for both accesses to happen in O(1)
-// (the access from  key and the access from information).
-// They receive linked lists in order to keep several infos for the same key
-// ( or vice versa ).
-//
-//Analyses of complexity:
-//
-// Insertion is done in O( n ) = 1 (access of element of Hash tables + append on a linked list).
-//
-//
+/*
+Use of structures:
 
+     2 hash tables that receive linked lists were used. one hashtable receives the key
+     and returns the info and the other receives the info and returns the key.
+     two tables are necessary and it is the only way in order for both accesses to happen in constant time
+     (the access from  key and the access from information).
+     They receive linked lists in order to keep several infos for the same key
+     ( or several keys for the same info ).
+
+
+Analyses of complexity:
+
+     Insertion is done in O( n ) = 1 (access of element of Hash tables + append on a linked list).
+*/
 import java.util.Scanner;
 import java.util.Locale;
 import java.io.FileReader; 
