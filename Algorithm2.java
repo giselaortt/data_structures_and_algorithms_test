@@ -8,6 +8,9 @@ Use of structures:
      They receive linked lists in order to keep several infos for the same key
      ( or several keys for the same info ).
 
+     The hashtables were chosen because we need the access to happen on constant time.
+     Another option would be to use an array of linked lists, that would have the same access time.
+     But i consider a hashtable to be more readable.
 
 Analyses of complexity:
 
@@ -85,7 +88,6 @@ class Area51{
         else {
             int size = this.selectormaps.get( selector ).size();
             for( int i=0; i<size; i++ )
-
                 System.out.printf("%c ", this.selectormaps.get( selector ).get( i ) );
             System.out.println();
         } 
@@ -93,9 +95,7 @@ class Area51{
 }
 
 class Algorithm2{
-
     public static void main( String args[] ) throws Exception {
-        
         Locale.setDefault(Locale.US);
         FileReader reader = new FileReader( args[0] );
         Scanner scan = new Scanner( reader );
