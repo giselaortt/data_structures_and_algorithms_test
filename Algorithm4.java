@@ -1,47 +1,47 @@
-//Use of algorithm:
-//
-// Algorithm 4 is an adaptation of the widely known rucksack problem. 
-// In this case, the objects do not have different values, so instead
-// of implementing the maximization of values, the solution was changed to
-// maximize the total weight of the backpack.
-//
-//Analyses of complexity:
-//
-// Defining n as the number of objects and w as the maximum capacity
-// for 1 suitcase. For 1 suitcase it was used the widely known algorithm of the
-// knapsack, that has complexity O(n) = n *  w. 
-// Since the problem contains at most n suitcases (one per object if they could
-// not possibly fit together), and for each suitcase there will be a call for
-// the conventional knapsack problem, this means that the fina solution has
-// complexity O(n) = n * n * w.
-// On  the reconstruction of the knapsack set of items: O(n) = w + n.
-// (because it does not go for every weight and object, and stops when any reaches 0).
-
-
 /*
+Use of algorithm:
+
+    Algorithm 4 is an adaptation of the widely known rucksack problem. 
+    In this case, the objects do not have different values, so instead
+    of implementing the maximization of values, the solution was changed to
+    maximize the total weight of the backpack.
+
+Analyses of complexity:
+
+    Defining n as the number of objects and w as the maximum capacity
+    for 1 suitcase. For 1 suitcase it was used the widely known algorithm of the
+    knapsack, that has complexity O(n) = n *  w. 
+    Since the problem contains at most n suitcases (one per object if they could
+    not possibly fit together), and for each suitcase there will be a call for
+    the conventional knapsack problem, this means that the fina solution has
+    complexity O(n) = n * n * w.
+    On  the reconstruction of the knapsack set of items: O(n) = w + n.
+    (because it does not go for every weight and object, and stops when any reaches 0).
+
+
 * Definition of subproblems:
 
-The first subproblem consists of maximizing the use for 1 suitcase. Secondly we
-must reconstruct the set of items that were included on the suitcase for each 
-iteration. Finally, repeat the algorithm until all the items have been placed.
+    The first subproblem consists of maximizing the use for 1 suitcase. Secondly we
+    must reconstruct the set of items that were included on the suitcase for each 
+    iteration. Finally, repeat the algorithm until all the items have been placed.
 
 * How the solutions to these subproblems are defined:
 
-The knapsack solution is based on a knapsack of smaller capacity and a knapsack
-problem with a smaller set of items.
-To get the set of items the algorithm is reversed engineered with the values produced.
+    The knapsack solution is based on a knapsack of smaller capacity and a knapsack
+    problem with a smaller set of items.
+    To get the set of items the algorithm is reversed engineered with the values produced.
 
 * How the solutions are calculated in the base case:
-When the current capacity or the number of items are zero, the solution is also zero.
-When the current item does not fit on the current capacity, the algorithm keeps 
-the solution for the same capacity without the current item.
+
+    When the current capacity or the number of items are zero, the solution is also zero.
+    When the current item does not fit on the current capacity, the algorithm keeps 
+    the solution for the same capacity without the current item.
 
 *  How the solutions are calculated in the general case:
-The algorithm chooses between including the current item in the sack or not, 
-depending on which option produces the smallest residual space.
+
+    The algorithm chooses between including the current item in the sack or not, 
+    depending on which option produces the smallest residual space.
 */
-
-
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -79,7 +79,7 @@ class Solver{
     }
 
     // This is a wrapping function for the recursive knapsack solution. 
-    private void knapsack(){
+    void knapsack(){
         int[][] intermediateStates = new int[ numberOfItems+1 ][ capacity+1 ];
         int i = this.numberOfItems;
         int w = this.capacity;
@@ -89,6 +89,7 @@ class Solver{
         reconstruct( intermediateStates, i, w, currentSet );
         this.solution.add( new LinkedList< Integer >() );
 
+        //
         for( int itemIndex : currentSet ){
             // adding current set to the set of used values
             this.wasUsed.add( itemIndex );
@@ -96,10 +97,9 @@ class Solver{
             this.solution.getLast().add( itemIndex );
         }
     }
-
-
+    
     //RECURSSION
-    private int knapsack( int i, int w, int[][] matrix ){
+    int knapsack( int i, int w, int[][] matrix ){
         if( i==0 || w==0 )
             return 0;
 
@@ -117,27 +117,30 @@ class Solver{
 
         return matrix[i][w];
     }
-
+    
     //RECURSSION
-    private void reconstruct( int[][] matrix, int i, int w, LinkedList<Integer> currentSet ){
+    void reconstruct( int[][] matrix, int i, int w, LinkedList<Integer> currentSet ){
         if( i==0 || w==0 )
             return;
         if( matrix[i][w] > matrix[i-1][w] ){
-            currentSet.add( i );
+            currentSet.addFirst( i );
             reconstruct( matrix, i-1, w - this.weights[i-1], currentSet );
         } else {
             reconstruct( matrix, i-1, w, currentSet );
         }
     }
-
+    
     // while the number of packed objects is smaller than the total of items,
     // keep packing.
-    public void solve(){
-       while( this.wasUsed.size() < this.numberOfItems )
+    void solve(){
+        int i=0;
+       while( i < 10 && this.wasUsed.size() < this.numberOfItems ){
+           i++;
            this.knapsack();
+       }
     }
     
-    public void display(){
+    void display(){
         int i=0;
         for( LinkedList<Integer> suitcase : this.solution ){
             i++;
@@ -153,9 +156,7 @@ class Solver{
     }
 }
 
-
 class Algorithm4{
-
     public static void main( String args[] ) throws Exception {
         Locale.setDefault(Locale.US);
         int numberOfItems;
@@ -178,6 +179,3 @@ class Algorithm4{
         solver.display();
     }
 }
-
-
-

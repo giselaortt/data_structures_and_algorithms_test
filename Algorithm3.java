@@ -6,14 +6,12 @@
 //
 //  - O(n) where n stands for the number of loads
 //  Because we iterate over the weights only one time
-
 import java.util.Locale;
 import java.util.LinkedList;
 import java.io.FileReader;
 import java.util.Scanner;
 
 class Solver{
-
     LinkedList<Integer> answer;
     int numberOfIterations;
     int ferryCapacity;
@@ -31,7 +29,7 @@ class Solver{
     }
 
     //add the load to the current boat as long as possible, and start another boat otherwise.
-    public void solve(){
+    void solve(){
         int currentLoad = 0;
         for( int i=0; i<this.numberOfVehicles; i++ ){
             if( currentLoad + this.weights[i] >= this.ferryCapacity ){
@@ -45,7 +43,7 @@ class Solver{
             this.answer.add( currentLoad );
     }
 
-    public void displayResult(){
+    void displayResult(){
         System.out.printf( "Number of trips: %d\n", this.answer.size() );
         int i=0;
         for( int load : answer ){
@@ -57,11 +55,8 @@ class Solver{
     }
 }
 
-
 class Algorithm3{
-
     public static void main( String args[] ) throws Exception {
-        
         Locale.setDefault(Locale.US);
         FileReader reader = new FileReader( args[0] );
         Scanner scan = new Scanner( reader );
@@ -77,5 +72,4 @@ class Algorithm3{
         solution.solve();
         solution.displayResult();
     }
-
 }

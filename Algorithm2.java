@@ -12,9 +12,11 @@ Use of structures:
      Another option would be to use an array of linked lists, that would have the same access time.
      But i consider a hashtable to be more readable.
 
+
 Analyses of complexity:
 
      Insertion is done in O( n ) = 1 (access of element of Hash tables + append on a linked list).
+
 */
 import java.util.Scanner;
 import java.util.Locale;
@@ -36,7 +38,7 @@ class Area51{
     //O(n) = 1.
     //Allocates the LinkedList if none is available for the given pair, and adds the new pair
     //to both tables.
-    public void addPair( int selector, char information ){
+     void addPair( int selector, char information ){
            if( this.isPresent( selector )==false )
                 this.selectormaps.put( selector, new LinkedList< Character >() );
            this.selectormaps.get( selector ).add( information );
@@ -46,7 +48,7 @@ class Area51{
     }
 
     //O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 1.
-    public void isPresent( int selector, char information ){
+     void isPresent( int selector, char information ){
         if( this.isPresent( selector ) == false || this.isPresent( information ) == false ){
             System.out.println("element not present");
             return;
@@ -61,16 +63,16 @@ class Area51{
         System.out.println("element not present");
     }
 
-    private boolean isPresent( int selector ){
+    boolean isPresent( int selector ){
         return this.selectormaps.containsKey(selector);
     }
 
-    private boolean isPresent( char information ){
+    boolean isPresent( char information ){
         return this.infomaps.containsKey(information);
     }
 
     //O(n) = 1 + number of pairs having the value of the given information, satisfing condition 2.
-    public void searchPerInfo( char information ){
+     void searchPerInfo( char information ){
         if( this.isPresent( information ) == false ){
             System.out.println("empty list");
         } else {
@@ -82,7 +84,7 @@ class Area51{
     }
 
     //O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 3.
-    public void searchPerSelector( int selector ){
+     void searchPerSelector( int selector ){
         if( this.isPresent( selector ) == false )
             System.out.println("empty list");
         else {
@@ -95,7 +97,7 @@ class Area51{
 }
 
 class Algorithm2{
-    public static void main( String args[] ) throws Exception {
+     public static void main( String args[] ) throws Exception {
         Locale.setDefault(Locale.US);
         FileReader reader = new FileReader( args[0] );
         Scanner scan = new Scanner( reader );

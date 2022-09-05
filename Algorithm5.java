@@ -17,7 +17,6 @@ Use of Data Structures:
 Asymptotic Analysis:
 
     Defining E = number of edges and V = number of Vertices.
-
     For the Dijkstra algorithm: O (V + E * log V)
 
 */
@@ -74,7 +73,6 @@ class Graph{
     ArrayList< ArrayList< Edge >> adjacencyList;
 
     Graph( int numberOfVertices, int numberOfEdges ){
-
         this.targetVertex       = numberOfVertices-1;
         this.initialVertex      = 0;
         this.numberOfVertices   = numberOfVertices;
@@ -86,14 +84,13 @@ class Graph{
         this.path               = new LinkedList<Integer>();
         this.adjacencyList      = new ArrayList< ArrayList< Edge > >( );
         this.adjacencyList.ensureCapacity( numberOfVertices );
-
         for( int i=0; i<numberOfVertices; i++ ){
             this.adjacencyList.add( new ArrayList< Edge >() );
             this.adjacencyList.get(i).ensureCapacity( numberOfVertices );
         }
     }
 
-    public void addEdge( int vertexId, int otherVertex, float cost ){
+    void addEdge( int vertexId, int otherVertex, float cost ){
         adjacencyList.get(vertexId).add( new Edge( otherVertex, cost ) );
     }
 
@@ -103,7 +100,7 @@ class Graph{
     }
 
     //Implementation of Djakstra`s algorithm.
-    private void findMinimalPath(){
+    void findMinimalPath(){
         this.lowestValueEdge.add( new Edge( this.initialVertex, 0 ) );
 
         //we will start on one because the initial vertex is 0, and therefore 
@@ -132,7 +129,7 @@ class Graph{
         this.time = this.accumulatedCosts[ this.targetVertex ];
     }
 
-    private void isRecheable(){
+    void isRecheable(){
         if( this.accumulatedCosts[ this.targetVertex ] == Float.MAX_VALUE )
             this.isRecheable = false;
         else
@@ -145,7 +142,7 @@ class Graph{
     // the right order. because it is only iterated on one order (no access to inermediate
     // elements), in order to save on the performance, a linked structure is better suited,
     // such as linked list or a stack. 
-    private void reconstructPath( ){
+    void reconstructPath( ){
         int currentVertex = this.targetVertex;
         while( currentVertex != this.initialVertex ){
             this.path.addFirst(currentVertex);
@@ -154,13 +151,13 @@ class Graph{
         this.path.addFirst(currentVertex);
     }
 
-    public void solve(){
+    void solve(){
         this.findMinimalPath();
         this.isRecheable();
         this.reconstructPath( );
     }
 
-    public void displayAnswer(){
+    void displayAnswer(){
         if( this.isRecheable == false ){
             System.out.println("unrecheable");
             return;
@@ -172,17 +169,14 @@ class Graph{
     }
 }
 
-
 //Placeholder for the waiting function that will be given.
 class ExampleWaitingFunction{
-    public static float waitingTime( int i, float time ){
+    static float waitingTime( int i, float time ){
         return (float) 5.0;
     }
 }
 
-
 class Algorithm5{
-
     public static void main( String args[] ) throws Exception {
         Locale.setDefault(Locale.US);
         int numberOfVertices, numberOfEdges;
@@ -195,7 +189,6 @@ class Algorithm5{
         numberOfEdges = scan.nextInt();
         scan.nextLine();
         Graph graph = new Graph( numberOfVertices, numberOfEdges );
-
         for( int i=0; i<numberOfEdges; i++ ){
             firstVertex = scan.nextInt();
             secondVertex = scan.nextInt();
@@ -203,10 +196,7 @@ class Algorithm5{
             scan.nextLine();
             graph.addEdge( firstVertex, secondVertex, cost );
         }
-    
         graph.solve();
         graph.displayAnswer();
     }
 }
-
-
