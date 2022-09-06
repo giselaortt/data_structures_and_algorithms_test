@@ -35,9 +35,8 @@ class Area51{
         this.infomaps = new HashMap< Character, LinkedList< Integer >>();
     }
 
-    //O(n) = 1.
-    //Allocates the LinkedList if none is available for the given pair, and adds the new pair
-    //to both tables.
+    //complexity: O(n) = 1
+    //Allocates the LinkedList if none is available for the given pair, and adds the new pair to both tables.
      void addPair( int selector, char information ){
            if( this.isPresent( selector )==false )
                 this.selectormaps.put( selector, new LinkedList< Character >() );
@@ -47,7 +46,8 @@ class Area51{
            this.infomaps.get( information ).add( selector );
     }
 
-    //O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 1.
+    //complexity: O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 1.
+    //checks if the given pair exists on the system.
      void isPresent( int selector, char information ){
         if( this.isPresent( selector ) == false || this.isPresent( information ) == false ){
             System.out.println("element not present");
@@ -63,36 +63,40 @@ class Area51{
         System.out.println("element not present");
     }
 
+    //checks if the selector exists on the system.
     boolean isPresent( int selector ){
         return this.selectormaps.containsKey(selector);
     }
 
+    //checks if the information exists on the system.
     boolean isPresent( char information ){
         return this.infomaps.containsKey(information);
     }
 
-    //O(n) = 1 + number of pairs having the value of the given information, satisfing condition 2.
-     void searchPerInfo( char information ){
+    //This function prints all the pairs that contain the given information.
+    //complexity: O(n) = 1 + number of pairs having the value of the given information, satisfing condition 2.
+     void displayPerInformation( char information ){
         if( this.isPresent( information ) == false ){
             System.out.println("empty list");
-        } else {
-            int size = this.infomaps.get(information).size();
-            for( int i=0; i<size; i++ )
-                System.out.printf( "%d ", this.infomaps.get(information).get(i) );
-            System.out.println();
+            return;
         }
+        //int size = this.infomaps.get(information).size();
+        for( int key : this.infomaps.get(information) )
+            System.out.printf( "%d ", key );
+        System.out.println();
     }
 
-    //O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 3.
-     void searchPerSelector( int selector ){
-        if( this.isPresent( selector ) == false )
+    //This function prints all the pairs that contain the given selector.
+    //complexity: O(n) = 1 + number of pairs having the value of the given selector, satisfing condition 3.
+     void displayPerSelector( int selector ){
+        if( this.isPresent( selector ) == false ){
             System.out.println("empty list");
-        else {
-            int size = this.selectormaps.get( selector ).size();
-            for( int i=0; i<size; i++ )
-                System.out.printf("%c ", this.selectormaps.get( selector ).get( i ) );
-            System.out.println();
-        } 
+            return;
+        }
+        int size = this.selectormaps.get( selector ).size();
+        for( char c : this.selectormaps.get(selector) )
+            System.out.printf("%c ", c );
+        System.out.println();
     }
 }
 
@@ -107,7 +111,6 @@ class Algorithm2{
         char information;
         int selector;
         Area51 solver = new Area51( );
-
         for( int i=0; i<n; i++ ){
             String line = scan.nextLine();
             String[] tokens = line.replaceAll("\n", "" ).split(" ");
@@ -115,19 +118,19 @@ class Algorithm2{
             information = (char)tokens[1].charAt(0);
             solver.addPair( selector, information );
         }
-
         solver.isPresent( 27, 'c' );
         solver.isPresent( 30, 'c' );
         solver.isPresent( 44, 'c' );
         System.out.println();
-        solver.searchPerInfo( 'a' );
-        solver.searchPerInfo( 'd' );
-        solver.searchPerInfo( 's' );
-        solver.searchPerInfo( 'f' );
-        solver.searchPerInfo( 'u' );
+        solver.displayPerInformation( 'a' );
+        solver.displayPerInformation( 'd' );
+        solver.displayPerInformation( 's' );
+        solver.displayPerInformation( 'f' );
+        solver.displayPerInformation( 'u' );
         System.out.println();
-        solver.searchPerSelector( 27 );
-        solver.searchPerSelector( 30 );
-        solver.searchPerSelector( 4 );
+        solver.displayPerSelector( 27 );
+        solver.displayPerSelector( 30 );
+        solver.displayPerSelector( 4 );
     }
 }
+

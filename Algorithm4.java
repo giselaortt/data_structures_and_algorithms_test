@@ -51,17 +51,14 @@ import java.util.Scanner;
 import java.util.HashSet;
 import java.lang.Comparable;
 
-
 class Solver{
     int numberOfItems;
     int[] weights;
     final int capacity = 23;
     String[] names;
-
     //the other option would be to use a boolean array,and a variable to count
     //how many objects there are left. but this is more pretty.
     HashSet< Integer > wasUsed;
-
     //For this use-case a LinkedList is the ideal data structure.
     //First because several calls to list.add() function will happen,
     //which is more efficient on a LinkedList. Second because
@@ -78,7 +75,8 @@ class Solver{
         this.wasUsed = new HashSet<Integer>();
     }
 
-    // This is a wrapping function for the recursive knapsack solution. 
+    //This is a wrapping function for the recursive knapsack solution. 
+    //it defines the variables as they should be on the start of the recursion. 
     void knapsack(){
         int[][] intermediateStates = new int[ numberOfItems+1 ][ capacity+1 ];
         int i = this.numberOfItems;
@@ -89,36 +87,32 @@ class Solver{
         reconstruct( intermediateStates, i, w, currentSet );
         this.solution.add( new LinkedList< Integer >() );
 
-        //
         for( int itemIndex : currentSet ){
-            // adding current set to the set of used values
+            // adding current set to the set of used objects
             this.wasUsed.add( itemIndex );
-            // passing current set of items to the set of items already used.
+            // passing current set of items to the solution set.
             this.solution.getLast().add( itemIndex );
         }
     }
     
-    //RECURSSION
+    //this is a recurssive function that optimizes the use of a suitcase,
+    //the calculation is based on a backpack without the current item and on smaller suitcase.
     int knapsack( int i, int w, int[][] matrix ){
         if( i==0 || w==0 )
             return 0;
-
         if( matrix[i][w] != 0 )
             return matrix[i][w];
-
         if( this.wasUsed.contains( i ) || this.weights[i-1] > w )
             matrix[i][w] =  knapsack(i-1, w, matrix); 
-
         else if( this.weights[i-1] + knapsack( i-1, w-this.weights[i-1], matrix ) >  knapsack( i-1, w, matrix ) )
            matrix[i][w] = this.weights[i-1] + knapsack( i-1, w-this.weights[i-1], matrix ); 
-
         else
             matrix[i][w] = knapsack( i-1, w, matrix );
-
         return matrix[i][w];
     }
     
-    //RECURSSION
+    //this is a recurssive function that will reverse the previous function in order to find out which items have
+    //been added on the final solution
     void reconstruct( int[][] matrix, int i, int w, LinkedList<Integer> currentSet ){
         if( i==0 || w==0 )
             return;
@@ -130,8 +124,7 @@ class Solver{
         }
     }
     
-    // while the number of packed objects is smaller than the total of items,
-    // keep packing.
+    //while the number of packed objects is smaller than the total of items, keep packing.
     void solve(){
         int i=0;
        while( i < 10 && this.wasUsed.size() < this.numberOfItems ){
@@ -139,7 +132,8 @@ class Solver{
            this.knapsack();
        }
     }
-    
+
+    //this function prints the final answer
     void display(){
         int i=0;
         for( LinkedList<Integer> suitcase : this.solution ){
@@ -167,13 +161,11 @@ class Algorithm4{
         String[] objectsNames = new String[numberOfItems];
         int[] objectWeights = new int[numberOfItems];
         String input_value;
-
         for( int i=0; i<numberOfItems; i++ ){
             String[] line = scam.nextLine().trim().replaceAll(" +", " ").split(" ");
             objectsNames[i] = line[0];
             objectWeights[i] = Integer.parseInt(line[1]);
         }
-        
         Solver solver = new Solver( objectWeights, objectsNames, numberOfItems );
         solver.solve();
         solver.display();

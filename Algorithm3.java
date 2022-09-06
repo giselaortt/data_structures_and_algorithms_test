@@ -43,6 +43,7 @@ class Solver{
             this.answer.add( currentLoad );
     }
 
+    //This function displayes the results as it was described in the problems pdf
     void displayResult(){
         System.out.printf( "Number of trips: %d\n", this.answer.size() );
         int i=0;

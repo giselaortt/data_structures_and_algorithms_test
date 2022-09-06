@@ -90,10 +90,12 @@ class Graph{
         }
     }
 
+    //this function inserts a new edge on the representation of the graph
     void addEdge( int vertexId, int otherVertex, float cost ){
         adjacencyList.get(vertexId).add( new Edge( otherVertex, cost ) );
     }
 
+    //this function will get the waiting time from the external function that should be passed
     static float getWaitingTime( int i, float time ){
         //change here to get the real waiting time function.
         return ExampleWaitingFunction.waitingTime( i, time );
@@ -115,8 +117,7 @@ class Graph{
 
             for( Edge edge : this.adjacencyList.get( currentVertex ) ){
                 int nextVertex = edge.vertex;
-                if( visited[ nextVertex ]  )
-                    continue;
+                if( visited[ nextVertex ]  )  continue;
                 edge.addToCost( wait );
                 this.lowestValueEdge.add( edge );
                 float tempDistance = accumulatedCosts[ currentVertex ] + edge.cost;
@@ -129,6 +130,7 @@ class Graph{
         this.time = this.accumulatedCosts[ this.targetVertex ];
     }
 
+    //this function serves to define if the target version is reacheable or not.
     void isRecheable(){
         if( this.accumulatedCosts[ this.targetVertex ] == Float.MAX_VALUE )
             this.isRecheable = false;
@@ -136,12 +138,12 @@ class Graph{
             this.isRecheable = true;
     }
 
-    // O(v) = v
-    // because the djikstra`s algorithm saves the path from last to first and it
-    // is required to print it form first to last, we reverse it to get the path on
-    // the right order. because it is only iterated on one order (no access to inermediate
-    // elements), in order to save on the performance, a linked structure is better suited,
-    // such as linked list or a stack. 
+    //O(v) = v
+    //because the djikstra`s algorithm saves the path from last to first and it
+    //is required to print it form first to last, we reverse it to get the path on
+    //the right order. because it is only iterated on one order (no access to inermediate
+    //elements), in order to save on the performance, a linked structure is better suited,
+    //such as linked list or a stack. 
     void reconstructPath( ){
         int currentVertex = this.targetVertex;
         while( currentVertex != this.initialVertex ){
@@ -157,6 +159,7 @@ class Graph{
         this.reconstructPath( );
     }
 
+    //prints the final solution as it is described on the problem description
     void displayAnswer(){
         if( this.isRecheable == false ){
             System.out.println("unrecheable");
