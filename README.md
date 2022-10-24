@@ -14,13 +14,6 @@ Considerations about the problems:
 
 4) dynamic programming (problem of the backpack)
 
-    - TO-DO: justify on the documentation why i opt in for linked lists instead of array list. 
 
-
-5) djikstra:
-
-    - There are different ways to pass a function as a parameter. Lambda functions, callable. It is possible to change if explicitly stated that this is necessary.
-
-    - Should the waiting time function be used to calculate the djikstra or only summed up on the end? 
-
+5) djikstra
 
